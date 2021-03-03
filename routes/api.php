@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Practice\ProblemCreationController;
+use App\Http\Controllers\Practice\ProblemQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,3 +28,15 @@ Route::get('/info', function() {
         "message"=>"Message only for authenticated users"
     ]);
 })->middleware('auth:api');
+Route::post('createproblem', [ProblemCreationController::class, 'create']);
+Route::get('problems', [ProblemQuery::class, 'getAllProblems']);
+/**
+ * "email": "snape@gmail.com","password": "testing111"
+  
+ */
+/**
+ * "name": "Aashab Tajwar",
+*	"email": "tajwar@gmail.com",
+*	"password": "testing111",
+*	"position": "Student"
+ */
