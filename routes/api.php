@@ -19,3 +19,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post('createuser', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
+Route::get('/info', function() {
+    return response()->json([
+        "message"=>"Message only for authenticated users"
+    ]);
+})->middleware('auth:api');
