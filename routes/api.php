@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\FileUpload;
 use App\Http\Controllers\Practice\ProblemCreationController;
 use App\Http\Controllers\Practice\ProblemQuery;
+use App\Http\Controllers\Submit\CodeSubmit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -36,10 +37,12 @@ Route::get('problems', [ProblemQuery::class, 'getAllProblems']);
 // get one problem
 Route::get('problems/{id}', [ProblemQuery::class, 'getOneProblem']);
 
+// submit problem
+Route::post('problems/{id}', [CodeSubmit::class, 'submit'])->middleware('auth:api');
 
 // just for testing
 Route::get('/some/definite/user', function(Request $request) {
-    return $request->user()->name;
+    return $request->user()->id;
 })->middleware(('auth:api'));
 
 

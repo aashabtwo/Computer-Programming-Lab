@@ -15,6 +15,10 @@ class CreateCodeSubmissionsTable extends Migration
     {
         Schema::create('code_submissions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('problem_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->string('code_path');
+            $table->boolean('passed');
             $table->timestamps();
         });
     }
