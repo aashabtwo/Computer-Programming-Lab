@@ -13,4 +13,14 @@ class ProblemQuery extends Controller
         $problems = Problem::get()->toJson(JSON_PRETTY_PRINT);
         return response($problems, 200);
     }
+
+    public function getOneProblem($id) {
+        /**
+         * use the query id to fetch the problem
+         * convert it into JSON using pretty print
+         * respond with the json
+         */
+        $problem = Problem::where('id', $id)->get()->toJson(JSON_PRETTY_PRINT);
+        return response($problem, 200);
+    }
 }

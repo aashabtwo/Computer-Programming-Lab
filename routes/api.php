@@ -33,15 +33,23 @@ Route::get('/info', function() {
 Route::post('createproblem', [ProblemCreationController::class, 'create']);
 Route::get('problems', [ProblemQuery::class, 'getAllProblems']);
 
+// get one problem
+Route::get('problems/{id}', [ProblemQuery::class, 'getOneProblem']);
+
+
 // just for testing
 Route::get('/some/definite/user', function(Request $request) {
     return $request->user()->name;
 })->middleware(('auth:api'));
 
+
+
 // storing file
 Route::get('/write', function() {
     Storage::disk('local')->put('example.txt', 'some contents');
 });
+
+
 // getting the contents of a file in raw string
 Route::get('/getfile', function() {
     $content = Storage::disk('local')->get('example.txt');
@@ -52,6 +60,23 @@ Route::get('/getfile', function() {
 
 // file upload route
 Route::post('/uploadfile', [FileUpload::class, 'fileUpload']);
+
+
+// url params test
+Route::get('/value/{code}', function(Request $request) {
+    $value = $request->route('code');
+    return response()->json([
+        'value' => $value,
+    ]);
+});
+
+
+
+
+
+
+
+
 
 
 /**
