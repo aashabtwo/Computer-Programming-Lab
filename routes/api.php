@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\FileUpload;
 use App\Http\Controllers\Practice\ProblemCreationController;
 use App\Http\Controllers\Practice\ProblemQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +32,28 @@ Route::get('/info', function() {
 })->middleware('auth:api');
 Route::post('createproblem', [ProblemCreationController::class, 'create']);
 Route::get('problems', [ProblemQuery::class, 'getAllProblems']);
+
+// just for testing
+Route::get('/some/definite/user', function(Request $request) {
+    return $request->user()->name;
+})->middleware(('auth:api'));
+
+// storing file
+Route::get('/write', function() {
+    Storage::disk('local')->put('example.txt', 'some contents');
+});
+// getting the contents of a file in raw string
+Route::get('/getfile', function() {
+    $content = Storage::disk('local')->get('example.txt');
+    return response()->json([
+        "content" => $content
+    ]);
+});
+
+// file upload route
+Route::post('/uploadfile', [FileUpload::class, 'fileUpload']);
+
+
 /**
  * "email": "snape@gmail.com","password": "testing111"
   
