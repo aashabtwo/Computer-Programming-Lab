@@ -18,6 +18,8 @@ class Problem extends Model
         'task',
         'input_content',
         'output_content',
+        'iter_num',
+        // number of test cases
     ];
 
 }

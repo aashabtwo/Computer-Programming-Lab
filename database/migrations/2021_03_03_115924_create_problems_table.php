@@ -22,6 +22,7 @@ class CreateProblemsTable extends Migration
             $table->longText('task');
             $table->string('input_content');
             $table->string('output_content');
+            $table->string('iter_num');
             $table->timestamps();
         });
     }

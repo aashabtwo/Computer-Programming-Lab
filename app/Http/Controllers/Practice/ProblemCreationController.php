@@ -21,6 +21,7 @@ class ProblemCreationController extends Controller
         $problem->task = $request->task;
         $problem->input_content = $request->inputContent;
         $problem->output_content = $request->outputContent;
+        $problem->iter_num = $request->iter_num;
         $problem->save();
 
         return response()->json([
