@@ -17,3 +17,7 @@ then, migrate
 ```
 php artisan migrate
 ```
+
+### Issue 2: Capturing submission outputs
+'exec' command returns only the last line
+use 'shell_exec' instead

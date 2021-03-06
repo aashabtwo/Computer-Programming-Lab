@@ -34,24 +34,70 @@ class CodeSubmit extends Controller
          * return the array as the response
          */
         if ($request->file()) {
+            $num = 0;
             $userId = $request->user()->id;
             $submittedCodeName = time().'_'.$request->file->getClientOriginalName();
             $filePath = $request->file('file')->storeAs('submissions', $submittedCodeName, 'public');
             $problem = Problem::where('id', $id)->get()->first();
-            $title = $problem->title;
+            $problem_title = $problem->title;
             $iterations = $problem->iter_num;
-            // get directory path compile code, then run code against test cases
-            $direct = dirname(dirname(dirname(dirname(__DIR__))));
-            $submission_directory = $direct."/storage/app/public/submissions/";
-            $compile_command = 'gcc -lm '.$submission_directory. ''.$submittedCodeName;
-            exec($compile_command);
-            $execute = exec('./a.out');
+            $title = str_replace(' ', '', $problem_title);
             $submission = new CodeSubmission();
             $submission->problem_id = $id;
             $submission->user_id = $userId;
             $submission->code_path = '/storage/'.$filePath;
 
-            $submission->passed = false;
+
+            $empty_array = array();
+            
+            
+            // get directory path compile code, then run code against test cases
+            $direct = dirname(dirname(dirname(dirname(__DIR__))));
+            $submission_directory = $direct."/storage/app/public/submissions/";
+            $solution_directory = "solutions/";
+            $compile_command = 'gcc -lm '.$submission_directory. ''.$submittedCodeName;
+            exec($compile_command); // make sure to implement exception handling later
+            $second_direct = dirname(__DIR__);
+            // $path = $second_direct.'/Submit/input1.txt';
+            $solution_path = $second_direct.'/Submit/solutions/'. $title;
+            $solution_file = fopen($solution_path . '/solution.txt', 'r');
+            $solution_string = fread($solution_file, filesize($solution_path . "/solution.txt"));
+            $solution = explode("\n", $solution_string);
+            fclose($solution_file);
+            
+            $j = 0; // iteration
+            for ($i = 0; $i < 5; $i++) {
+                $path = $solution_path . "/input" . strval($i) . '.txt';
+                $execute_command = './a.out < ' . $path;
+                $code = shell_exec($execute_command);
+                $splitted = explode("\n", $code);
+                if ($splitted[0] == $solution[$j] && $splitted[1] == $solution[$j+1] ) {
+                    $message = "Passed";
+                    $empty_array[] = $message;
+                } 
+                else {
+                    $num = 1;
+                    $message = "Failed";
+                    $empty_array[] = $message;
+                    $empty_array[] = false;
+                    break;
+                }
+                $j = $j + $iterations;
+                //print $splitted;
+                //$empty_array[] = $splitted;
+                // break;
+                //echo $splitted;
+                //echo "\n";
+            }
+            //$execute = shell_exec($execute_command);
+            //$splitted = explode("\n", $execute);
+            if ($num == 0) {
+                $submission->passed = true;
+            }
+            else {
+                $submission->passed = false;
+            }
+            
             $submission->save();
 
 
@@ -59,11 +105,16 @@ class CodeSubmit extends Controller
             return response()->json([
                 'satus_code' => 201,
                 'message' => 'Code Submitted',
-                "title" => $title,
-                "iterations" => $iterations,
-                "directory" => $submission_directory,
-                "compilecommand" => $compile_command,
-                'output' => $execute
+                //"title" => $title,
+                //"iterations" => $iterations,
+                //"directory" => $submission_directory,
+                //"compilecommand" => $compile_command,
+                //'output' => $splitted,
+                //'solution' => $solution[0],
+                //'solution2' => $solution[1],
+                //'path' => $path,
+                'message' => $empty_array
+
             ]);
 
         }
