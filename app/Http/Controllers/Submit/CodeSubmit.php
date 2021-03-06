@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Submit;
 
 use App\Http\Controllers\Controller;
 use App\Models\CodeSubmission;
+use App\Models\Problem;
 use Illuminate\Http\Request;
 
 class CodeSubmit extends Controller
@@ -16,8 +17,10 @@ class CodeSubmit extends Controller
          * use the $id parameter to get the problem's title
          * check if the request object contains any files
          * get the user id from the token
-         * Set the file name and define the file storage path
-         * insert and save the submission data
+         * Define the file name and the file storage path
+         * insert problem_id, userid, code_path. Save the submission data later
+         * use the $id to fetch problems iter_num and title
+         * Remove the white spaces from the title and use the iternum
          * Define a variable (num) and set it to 0
          * Initiate an empty array (this is where test case results will be saved)
          * Now attempt to compile the code
@@ -34,17 +37,33 @@ class CodeSubmit extends Controller
             $userId = $request->user()->id;
             $submittedCodeName = time().'_'.$request->file->getClientOriginalName();
             $filePath = $request->file('file')->storeAs('submissions', $submittedCodeName, 'public');
-            
+            $problem = Problem::where('id', $id)->get()->first();
+            $title = $problem->title;
+            $iterations = $problem->iter_num;
+            // get directory path compile code, then run code against test cases
+            $direct = dirname(dirname(dirname(dirname(__DIR__))));
+            $submission_directory = $direct."/storage/app/public/submissions/";
+            $compile_command = 'gcc -lm '.$submission_directory. ''.$submittedCodeName;
+            exec($compile_command);
+            $execute = exec('./a.out');
             $submission = new CodeSubmission();
             $submission->problem_id = $id;
             $submission->user_id = $userId;
             $submission->code_path = '/storage/'.$filePath;
+
             $submission->passed = false;
             $submission->save();
+
+
             
             return response()->json([
                 'satus_code' => 201,
-                'message' => 'Code Submitted'
+                'message' => 'Code Submitted',
+                "title" => $title,
+                "iterations" => $iterations,
+                "directory" => $submission_directory,
+                "compilecommand" => $compile_command,
+                'output' => $execute
             ]);
 
         }
