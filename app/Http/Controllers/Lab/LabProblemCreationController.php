@@ -22,6 +22,7 @@ class LabProblemCreationController extends Controller
         $problem->input_content = $request->inputContent;
         $problem->output_content = $request->outputContent;
         $problem->iter_num = $request->iter_num;
+        $problem->marks = $request->marks;
         $problem->save();
 
         return response()->json([

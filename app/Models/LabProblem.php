@@ -18,6 +18,7 @@ class LabProblem extends Model
         'input_content',
         'output_content',
         'iter_num',
+        'marks',
         // number of test cases
     ];
 }

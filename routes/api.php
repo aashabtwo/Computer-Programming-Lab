@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\FileUpload;
+use App\Http\Controllers\Lab\LabProblemCreationController;
+use App\Http\Controllers\Lab\LabProblemQuery;
 use App\Http\Controllers\Practice\ProblemCreationController;
 use App\Http\Controllers\Practice\ProblemQuery;
 use App\Http\Controllers\Submit\CodeSubmit;
+use App\Models\LabProblem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -39,14 +42,27 @@ Route::get('/info', function() {
         "message"=>"Message only for authenticated users"
     ]);
 })->middleware('auth:api');
+
+// create practice problems
 Route::post('createproblem', [ProblemCreationController::class, 'create']);
 Route::get('problems', [ProblemQuery::class, 'getAllProblems']);
+
+// create lab problem
+Route::post('createlabproblems', [LabProblemCreationController::class, 'create']);
+
 
 // get one problem
 Route::get('problems/{id}', [ProblemQuery::class, 'getOneProblem']);
 
 // submit problem
-Route::post('problems/{id}', [CodeSubmit::class, 'submit'])->middleware('auth:api');
+Route::post('problems/{id}', [CodeSubmit::class, 'submit'])->middleware('auth:api')->middleware('checkuser');
+
+
+// get all lab problems
+Route::get('lab/problems', [LabProblemQuery::class, 'getAllProblems']);
+// get one lab problem
+Route::get('lab/problems/{id}', [LabProblemQuery::class, 'getOneProblem']);
+
 
 // just for testing
 Route::get('/some/definite/user', function(Request $request) {
@@ -81,7 +97,12 @@ Route::get('/value/{code}', function(Request $request) {
     ]);
 });
 
-
+// check middleware
+Route::get('/teacher', function(Request $request) {
+    return response()->json([
+        "message" => "Hello Teacher!"
+    ]);
+})->middleware('auth:api')->middleware('checkuser');
 
 
 

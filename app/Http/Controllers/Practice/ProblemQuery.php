@@ -21,8 +21,8 @@ class ProblemQuery extends Controller
          * respond with the json
          */
         $problem = Problem::where('id', $id)->get()->toJson(JSON_PRETTY_PRINT);
-        //$problem = Problem::where('id', $id)->get()->first();
-        //$title = $problem->title;
         return response($problem, 200);
     }
 }
+//$problem = Problem::where('id', $id)->get()->first();
+        //$title = $problem->title;
