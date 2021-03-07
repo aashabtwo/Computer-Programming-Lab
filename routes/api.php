@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\FileUpload;
+use App\Http\Controllers\Lab\LabCreation;
 use App\Http\Controllers\Lab\LabProblemCreationController;
 use App\Http\Controllers\Lab\LabProblemQuery;
+use App\Http\Controllers\Lab\LabQueries;
 use App\Http\Controllers\Practice\ProblemCreationController;
 use App\Http\Controllers\Practice\ProblemQuery;
 use App\Http\Controllers\Submit\CodeSubmit;
+use App\Models\Lab;
 use App\Models\LabProblem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -62,6 +65,16 @@ Route::post('problems/{id}', [CodeSubmit::class, 'submit'])->middleware('auth:ap
 Route::get('lab/problems', [LabProblemQuery::class, 'getAllProblems']);
 // get one lab problem
 Route::get('lab/problems/{id}', [LabProblemQuery::class, 'getOneProblem']);
+
+// create lab
+Route::post('createlab', [LabCreation::class, 'createLab'])
+    ->middleware('auth:api')
+    ->middleware('checkuser');
+
+// get labs
+Route::get('labs', [LabQueries::class, 'getAllLabs']);
+// get lab teachers
+Route::get('labteachers', [LabQueries::class, 'getAllLabTeachers']);
 
 
 // just for testing
@@ -121,3 +134,13 @@ Route::get('/teacher', function(Request $request) {
 *	"password": "testing111",
 *	"position": "Student"
  */
+
+/*
+{
+	
+	"email":"snape@gmail.com",
+	"name": "Professor Snape",
+	"position": "Teacher",
+	"password":"testing111"
+}
+*/
