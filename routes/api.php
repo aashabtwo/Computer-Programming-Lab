@@ -8,6 +8,7 @@ use App\Http\Controllers\Lab\LabProblemCreationController;
 use App\Http\Controllers\Lab\LabProblemQuery;
 use App\Http\Controllers\Lab\LabQueries;
 use App\Http\Controllers\Lab\StudentJoin;
+use App\Http\Controllers\Lab\StudentLabController;
 use App\Http\Controllers\Practice\ProblemCreationController;
 use App\Http\Controllers\Practice\ProblemQuery;
 use App\Http\Controllers\Submit\CodeSubmit;
@@ -110,6 +111,16 @@ Route::post('labs/{id}/problems/{p_id}', [Assignment::class, 'giveAssignment'])
 // Route to show given assignments
 Route::get('lab/assignments', [Assignment::class, 'showAssignments']);
 
+
+// lab dashboard for students
+Route::get('lab', [StudentLabController::class, 'labs'])->middleware('auth:api');
+
+// route to access one lab
+Route::get('lab/{id}', [StudentLabController::class, 'lab'])->middleware('auth:api');
+
+// Route to acess assignments
+Route::get('lab/{id}/assignments', [StudentLabController::class, 'assignments'])
+    ->middleware('auth:api');
 
 
 
