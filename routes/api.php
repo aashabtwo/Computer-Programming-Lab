@@ -6,11 +6,13 @@ use App\Http\Controllers\Lab\LabCreation;
 use App\Http\Controllers\Lab\LabProblemCreationController;
 use App\Http\Controllers\Lab\LabProblemQuery;
 use App\Http\Controllers\Lab\LabQueries;
+use App\Http\Controllers\Lab\StudentJoin;
 use App\Http\Controllers\Practice\ProblemCreationController;
 use App\Http\Controllers\Practice\ProblemQuery;
 use App\Http\Controllers\Submit\CodeSubmit;
 use App\Models\Lab;
 use App\Models\LabProblem;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -72,9 +74,17 @@ Route::post('createlab', [LabCreation::class, 'createLab'])
     ->middleware('checkuser');
 
 // get labs
-Route::get('labs', [LabQueries::class, 'getAllLabs']);
+Route::get('labs-all', [LabQueries::class, 'getAllLabs']);
 // get lab teachers
 Route::get('labteachers', [LabQueries::class, 'getAllLabTeachers']);
+
+// register student to a lab
+Route::post('lab/join/{id}', [StudentJoin::class, 'registerStudent'])->middleware('auth:api');
+
+// get the labs created by the teacher
+Route::get('labs', [LabQueries::class, 'labs'])->middleware('auth:api')->middleware('checkuser');
+// get one lab created by the teacher
+Route::get('labs/{id}', [LabQueries::class, 'oneLab'])->middleware('auth:api')->middleware('checkuser');
 
 
 // just for testing
@@ -107,6 +117,22 @@ Route::get('/value/{code}', function(Request $request) {
     $value = $request->route('code');
     return response()->json([
         'value' => $value,
+    ]);
+});
+
+// url params test 2
+Route::get('value/{id}/problems', function(Request $request) {
+    $value = $request->route('id');
+    return response()->json([
+        'value' => $value
+    ]);
+});
+
+// query test
+Route::get('query', function () {
+    $user = User::where('id', 1)->where('email', 'aashab@gmail.com')->get()->first();
+    return response()->json([
+        'user' => $user
     ]);
 });
 
