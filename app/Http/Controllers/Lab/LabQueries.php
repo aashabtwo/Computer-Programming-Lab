@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lab;
+use App\Models\LabProblem;
 use App\Models\LabTeacher;
 use Illuminate\Http\Request;
 
@@ -41,5 +42,18 @@ class LabQueries extends Controller
                 'message' => "Lab not found"
             ], 404);
         }
+    }
+    // method to show lab problems
+    public function problems (Request $request) {
+        
+        $problems = LabProblem::get()->toJson(JSON_PRETTY_PRINT);
+        return response($problems, 200);
+        
+    }
+
+    // method to show one lab problem
+    public function problem(Request $request, $id) {
+        $problem = LabProblem::where('id', $id)->get()->toJson(JSON_PRETTY_PRINT);
+        return response($problem, 200);
     }
 }

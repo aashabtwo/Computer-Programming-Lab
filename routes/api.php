@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\FileUpload;
+use App\Http\Controllers\Lab\Assignment;
 use App\Http\Controllers\Lab\LabCreation;
 use App\Http\Controllers\Lab\LabProblemCreationController;
 use App\Http\Controllers\Lab\LabProblemQuery;
@@ -68,6 +69,8 @@ Route::get('lab/problems', [LabProblemQuery::class, 'getAllProblems']);
 // get one lab problem
 Route::get('lab/problems/{id}', [LabProblemQuery::class, 'getOneProblem']);
 
+
+
 // create lab
 Route::post('createlab', [LabCreation::class, 'createLab'])
     ->middleware('auth:api')
@@ -85,6 +88,29 @@ Route::post('lab/join/{id}', [StudentJoin::class, 'registerStudent'])->middlewar
 Route::get('labs', [LabQueries::class, 'labs'])->middleware('auth:api')->middleware('checkuser');
 // get one lab created by the teacher
 Route::get('labs/{id}', [LabQueries::class, 'oneLab'])->middleware('auth:api')->middleware('checkuser');
+
+// route to see lab problems (from which the teachers can select assignments)
+Route::get('labs/{id}/problems', [LabQueries::class, 'problems'])
+    ->middleware('auth:api')
+    ->middleware('checkuser')
+    ->middleware('lab');
+
+// route to see one lab problem
+Route::get('labs/{id}/problems/{p_id}', [LabQueries::class, 'problem'])
+    ->middleware('auth:api')
+    ->middleware('checkuser')
+    ->middleware('lab');
+
+// Route to assign a lab problem (giving assignment)
+Route::post('labs/{id}/problems/{p_id}', [Assignment::class, 'giveAssignment'])
+    ->middleware('auth:api')
+    ->middleware('checkuser')
+    ->middleware('lab');
+
+// Route to show given assignments
+Route::get('lab/assignments', [Assignment::class, 'showAssignments']);
+
+
 
 
 // just for testing
@@ -144,8 +170,15 @@ Route::get('/teacher', function(Request $request) {
 })->middleware('auth:api')->middleware('checkuser');
 
 
-
-
+// check two params
+Route::get('sum/{code}/and/{values}', function(Request $request) {
+    $code = $request->route('code');
+    $values = $request->route('values');
+    return response()->json([ 
+        'a' => $code,
+        'b' => $values
+    ]);
+});
 
 
 
