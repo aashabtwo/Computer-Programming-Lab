@@ -18,8 +18,8 @@ class StudentLab
     public function handle(Request $request, Closure $next)
     {
         $lab_id = $request->route('id');
-        $teacher_id = $request->user()->id;
-        $lab = LabStudent::where('user_id', $teacher_id)->where('lab_id', $lab_id)->get()->first();
+        $student_id = $request->user()->id;
+        $lab = LabStudent::where('user_id', $student_id)->where('lab_id', $lab_id)->get()->first();
         if ($lab) {
             return $next($request);
         }

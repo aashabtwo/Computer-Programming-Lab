@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Models\LabAssignment;
 use App\Models\LabStudent;
 use Illuminate\Http\Request;
 
@@ -32,7 +33,9 @@ class StudentLabController extends Controller
 
     // method to get one lab
     public function lab(Request $request, $id) {
-        $lab = LabStudent::where('id', $id)->where('user_id',)->get()->toJson(JSON_PRETTY_PRINT);
+        $user_id = $request->user()->id;
+        // this will show the lab with the given id and student's user_id
+        $lab = LabStudent::where('id', $id)->where('user_id', $user_id)->get()->toJson(JSON_PRETTY_PRINT); 
         if ($lab) {
             return response($lab, 200);
         }
@@ -44,7 +47,26 @@ class StudentLabController extends Controller
     }
 
     // method to check all given assignments
+    public function labAssignments(Request $request) {
+        /**
+         * REMINDER: the route that this method belongs must pass two middlewares -> "auth:api" and "labstudent"
+         * query all the given assignments with this lab id
+         */
+        $lab_id = $request->route('id');
+        $assignments = LabAssignment::where('lab_id', $lab_id)->get()->toJson(JSON_PRETTY_PRINT);
+        return response($assignments, 200);
+    }
     // method to check one assignment
+    public function oneLabAssignment(Request $request) {
+        /**
+         * REMINDER: the route that this method belongs must pass two middlewares -> "auth:api" and "labstudent"
+         * query one given assignment bearing this lab id
+         */
+        $lab_id = $request->route('id');
+        $assignment_id = $request->route('assignment_id');
+        $assignment = LabAssignment::where('lab_id', $lab_id)->where('id', $assignment_id)->get()->toJson(JSON_PRETTY_PRINT);
+        return response($assignment, 200);
+    }
     // method to submit an assignment
     
 }

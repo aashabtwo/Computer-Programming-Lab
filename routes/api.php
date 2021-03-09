@@ -119,8 +119,21 @@ Route::get('lab', [StudentLabController::class, 'labs'])->middleware('auth:api')
 Route::get('lab/{id}', [StudentLabController::class, 'lab'])->middleware('auth:api');
 
 // Route to acess assignments
-Route::get('lab/{id}/assignments', [StudentLabController::class, 'assignments'])
-    ->middleware('auth:api');
+Route::get('lab/{id}/assignments', [StudentLabController::class, 'labAssignments'])
+    ->middleware('auth:api')
+    ->middleware('labstudent');
+
+// route to access one assignment
+Route::get('lab/{id}/assignments/{assignment_id}', [StudentLabController::class, 'oneLabAssignment'])
+    ->middleware('auth:api')
+    ->middleware('labstudent');
+
+
+
+
+
+
+
 
 
 
