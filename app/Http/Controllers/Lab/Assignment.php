@@ -20,9 +20,10 @@ class Assignment extends Controller
         * take the user's name from request
         */
         $lab_id = $request->route('id');
+        $problem_id = $request->route('p_id');
         $lab = Lab::where('id', $lab_id)->get()->first();
 
-        $lab_problem = LabProblem::where('id', $id)->get()->first();
+        $lab_problem = LabProblem::where('id', $problem_id)->get()->first();
 
         $assignment = new LabAssignment();
         $assignment->title = $lab_problem->title;
