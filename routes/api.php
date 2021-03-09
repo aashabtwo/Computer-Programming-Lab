@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\FileUpload;
 use App\Http\Controllers\Lab\Assignment;
+use App\Http\Controllers\Lab\AssignmentSubmission;
 use App\Http\Controllers\Lab\LabCreation;
 use App\Http\Controllers\Lab\LabProblemCreationController;
 use App\Http\Controllers\Lab\LabProblemQuery;
@@ -128,6 +129,10 @@ Route::get('lab/{id}/assignments/{assignment_id}', [StudentLabController::class,
     ->middleware('auth:api')
     ->middleware('labstudent');
 
+// route to submit assignment
+Route::post('lab/{id}/assignments/{assignment_id}', [AssignmentSubmission::class, 'submit'])
+    ->middleware('auth:api')
+    ->middleware('labstudent');
 
 
 
