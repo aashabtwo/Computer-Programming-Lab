@@ -62,32 +62,43 @@ class AssignmentSubmission extends Controller
                 // execute with inputs
                 $blah = 'not okay';
                 $iteration = (int)$iterations;
-                
+                $num = 0;
+
                 // load solution, 
+
                 $solution_path = $solution_directory . '' . $title_trimmed;
                 $solution_file = fopen($solution_path . '/solution.txt', 'r');
                 $solution_string = fread($solution_file, filesize($solution_path . "/solution.txt"));
                 $solution = explode("\n", $solution_string);
-                $assignment_submission->passed = false;
                 
                 // execute code
+                $input_path = $solution_path . '/' . 'input0.txt';
+                $execute_command = './a.out < ' . $input_path;
+                $code = shell_exec($execute_command);
+                $output = explode("\n", $code);
+                for ($i = 0; $i < count($output); $i++) {
+                    if ($output[$i] != $solution[$i]) {
+                        $assignment_submission->passed = false;
+                        $assignment_submission->save();
+                        return response()->json([
+                            'message' => 'Failed! Try submitting again'
+                        ], 200);
+                        break;
+                    }
+                }
+                $assignment_submission->passed = true;
+                $assignment_submission->save();
+                return response()->json([
+                    'message' => 'Success! Your submission is accepted. Your instructor will now review your code'
+                ], 200);
                 
+                }
+
             }
             
 
-            $assignment_submission->save();
-            return response()->json([
-                'message' => 'submitted',
-                'instance' => $assignment_submission,
-                'directory' => $solution_directory,
-                //'title' => $title,
-                //'iterations' => $iterations
-                'submission_directory' => $submissions_directory,
-                'solution_path' => $solution_path
-                //'blah' => $blah,
-                //'solution' => $solution
-            ], 200);
+            
             
         }
     }
-}
+
