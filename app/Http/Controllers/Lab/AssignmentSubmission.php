@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class AssignmentSubmission extends Controller
 {
+    /**
+     *      CODE WILL BE DRASTICALLY CHANGED LATER
+     *      I JUST WANTED TO HAVE THE BASIC FUNCTIONALITIES TO WORK
+     * 
+     */
+
+
     // method to handle assingment submission
     public function submit(Request $request) {
         if ($request->file()) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Models\AssignmentSubmission;
 use App\Models\Lab;
 use App\Models\LabAssignment;
 use App\Models\LabProblem;
@@ -51,4 +52,30 @@ class Assignment extends Controller
         $assignments = LabAssignment::get()->toJson(JSON_PRETTY_PRINT);
         return response($assignments, 200);
     }
+
+    // method to show student submissions
+    public function submissions() {
+        // THIS NEEDS TO BE CHANGED!
+            /**
+             * assignment submission should have 'submiited_by' field
+             * should also have a 'lab_name' field
+             */
+        $submissions = AssignmentSubmission::get()->toJson(JSON_PRETTY_PRINT);
+        return response($submissions, 200);
+    }
+    // method to show one submission
+    public function submission(Request $request) {
+        $submission = AssignmentSubmission::where('id', $request->route('s_id'))->get()->first();
+        $root_directory = dirname(dirname(dirname(dirname(__DIR__))));
+        $path = $submission->code_path;
+        $path = str_replace('/storage/', '', $path);
+        $code_path = $root_directory . '/storage/app/public/' . $path;
+        $file = fopen($code_path, 'r');
+        $code = fread($file, filesize($code_path));
+        
+        return response()->json([
+            'res' => $code_path,
+            'code' => $code
+        ]);
+    }    
 }

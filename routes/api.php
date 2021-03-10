@@ -109,6 +109,18 @@ Route::post('labs/{id}/problems/{p_id}', [Assignment::class, 'giveAssignment'])
     ->middleware('checkuser')
     ->middleware('lab');
 
+// Route to check submissions by students - Teacher's route
+Route::get('labs/{id}/assignmentsubmissions', [Assignment::class, 'submissions'])
+    ->middleware('auth:api')
+    ->middleware('checkuser')
+    ->middleware('lab');
+
+// Route to check each submission
+Route::get('/labs/{id}/assignmentsubmissions/{s_id}', [Assignment::class, 'submission'])
+    ->middleware('auth:api')
+    ->middleware('checkuser')
+    ->middleware('lab');
+
 // Route to show given assignments
 Route::get('lab/assignments', [Assignment::class, 'showAssignments']);
 
