@@ -77,5 +77,32 @@ class Assignment extends Controller
             'res' => $code_path,
             'code' => $code
         ]);
-    }    
+    }
+    
+    // method to accept submission
+    public function accept(Request $request) {
+        $submission = AssignmentSubmission::where('id', $request->route('s_id'))->get()->first();
+        if ($request->remarks) {
+            $submission->remarks = $request->remarks;
+        }
+        $submission->reviewed = true;
+        $submission->approved = true;
+        $submission->save();
+        return response()->json([
+            'message' => 'Submission has been accepted'
+        ]);
+    }
+    // method to reject submissions
+    public function reject(Request $request) {
+        $submission = AssignmentSubmission::where('id', $request->route('s_id'))->get()->first();
+        if ($request->remarks) {
+            $submission->remarks = $request->remarks;
+        }
+        $submission->reviewed = true;
+        $submission->approved = false;
+        $submission->save();
+        return response()->json([
+            'message' => 'Submission has been rejected'
+        ]);
+    }
 }

@@ -121,6 +121,19 @@ Route::get('/labs/{id}/assignmentsubmissions/{s_id}', [Assignment::class, 'submi
     ->middleware('checkuser')
     ->middleware('lab');
 
+// route to accept the submission
+Route::put('/labs/{id}/assignmentsubmissions/{s_id}/accept', [Assignment::class, 'accept'])
+    ->middleware('auth:api')
+    ->middleware('checkuser')
+    ->middleware('lab');
+
+Route::put('/labs/{id}/assignmentsubmissions/{s_id}/reject', [Assignment::class, 'reject'])
+    ->middleware('auth:api')
+    ->middleware('checkuser')
+    ->middleware('lab');
+
+
+
 // Route to show given assignments
 Route::get('lab/assignments', [Assignment::class, 'showAssignments']);
 
