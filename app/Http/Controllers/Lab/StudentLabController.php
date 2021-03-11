@@ -71,10 +71,10 @@ class StudentLabController extends Controller
     // method to show accepted or rejected submissions
     public function accepts(Request $request) {
         $bool = $request->route('bool');
-        if ($bool == 'true') {
+        if ($bool == 'accept') {
             $submission = AssignmentSubmission::where('user_id', $request->user()->id)->where('approved', true)->get()->toJson(JSON_PRETTY_PRINT);
         }
-        elseif ($bool == 'false') {
+        elseif ($bool == 'rejects') {
             $submission = AssignmentSubmission::where('user_id', $request->user()->id)->where('reviewed', true)->where('approved', false)->get()->toJson(JSON_PRETTY_PRINT);
         }
         return response($submission, 200);

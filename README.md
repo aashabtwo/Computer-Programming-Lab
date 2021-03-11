@@ -25,3 +25,6 @@ Use 'shell_exec' instead
 
 ### Issue 3: Error handling, request body validation, file extension check
 None of these have been implemented. However, they will be (hopefully) present in the next commit.
+
+### Issue 4???
+Am tired, taking a break for who knows how long.
