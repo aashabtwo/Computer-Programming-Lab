@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Models\AssignmentSubmission;
 use App\Models\LabAssignment;
 use App\Models\LabStudent;
 use Illuminate\Http\Request;
@@ -67,6 +68,24 @@ class StudentLabController extends Controller
         $assignment = LabAssignment::where('lab_id', $lab_id)->where('id', $assignment_id)->get()->toJson(JSON_PRETTY_PRINT);
         return response($assignment, 200);
     }
-    // method to submit an assignment
+    // method to show accepted or rejected submissions
+    public function accepts(Request $request) {
+        $bool = $request->route('bool');
+        if ($bool == 'true') {
+            $submission = AssignmentSubmission::where('user_id', $request->user()->id)->where('approved', true)->get()->toJson(JSON_PRETTY_PRINT);
+        }
+        elseif ($bool == 'false') {
+            $submission = AssignmentSubmission::where('user_id', $request->user()->id)->where('reviewed', true)->where('approved', false)->get()->toJson(JSON_PRETTY_PRINT);
+        }
+        return response($submission, 200);
+    }
+    // method to show one accepted/rejected submission
+    public function oneSubmission(Request $request) {
+        $submission_id = $request->route('s_id');
+        $submission = AssignmentSubmission::where('id', $submission_id)->get()->toJson(JSON_PRETTY_PRINT);
+        return response($submission, 200);
+    }
+
+
     
 }

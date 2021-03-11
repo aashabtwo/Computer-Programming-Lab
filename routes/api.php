@@ -159,6 +159,11 @@ Route::post('lab/{id}/assignments/{assignment_id}', [AssignmentSubmission::class
     ->middleware('auth:api')
     ->middleware('labstudent');
 
+// route for students to check submission results
+Route::get('lab/{id}/results/{bool}', [StudentLabController::class, 'accepts'])
+    ->middleware('auth:api')
+    ->middleware('labstudent');  // if bool is true, show accepted assignments, else show rejected ones
+
 
 
 
