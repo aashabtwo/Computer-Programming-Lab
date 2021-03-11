@@ -22,3 +22,6 @@ php artisan migrate
 ### Issue 2: Capturing submission outputs
 'exec' command returns only the last line.
 Use 'shell_exec' instead
+
+### Issue 3: Error handling, request body validation, file extension check
+None of these have been implemented. However, they will be (hopefully) present in the next commit.
