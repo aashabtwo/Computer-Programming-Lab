@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AssignmentSubmission as ModelsAssignmentSubmission;
 use App\Models\LabAssignment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AssignmentSubmission extends Controller
 {
@@ -18,6 +19,15 @@ class AssignmentSubmission extends Controller
 
     // method to handle assingment submission
     public function submit(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:c'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Bad Request. Try submitting again'
+            ], 400);
+        }
+
         if ($request->file()) {
             $submissionName = time().'_'.$request->file->getClientOriginalName();
             $filePath = $request->file('file')->storeAs('assignment_submissions', $submissionName, 'public');

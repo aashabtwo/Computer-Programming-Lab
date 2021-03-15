@@ -64,11 +64,19 @@ class AuthController extends Controller
          * the Password Grant client object (createToken('Password Grant client'))
          * Send a success message and the token
          */
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password
-        ];
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Bad Request, try again'
+            ], 400);
+        }
+
+
         $user = User::where('email', $request->email)->first();
+        
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
                 $token = $user->createToken('Password Grant client')->accessToken;

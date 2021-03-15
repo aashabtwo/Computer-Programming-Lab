@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Lab;
 use App\Models\LabTeacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class LabCreation extends Controller
 {
@@ -21,6 +22,17 @@ class LabCreation extends Controller
         // lab_category
         // department
         // for teachers -> user_id, teacher_name, lab_id, lab_name
+        $validator = Validator::make($request->all(), [
+            'lab_name' => 'required|max:100',
+            'lab_category' => 'required|max:50',
+            'department' => 'required|max:100'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Bad Request'
+            ], 400);
+        }
+
         $lab = new Lab();
         $lab->lab_name = $request->lab_name;
         $lab->lab_category = $request->lab_category;

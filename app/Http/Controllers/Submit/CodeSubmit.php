@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CodeSubmission;
 use App\Models\Problem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CodeSubmit extends Controller
 {
@@ -33,6 +34,14 @@ class CodeSubmit extends Controller
          * Else, keep num = 0, and when the loop ends, append a 'true' bool at the end and set passed = true
          * return the array as the response
          */
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:c' // specifying only .c files are accepted
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Bad Request. Try submitting again'
+            ], 400);
+        }
         if ($request->file()) {
             $num = 0;
             $userId = $request->user()->id;
@@ -83,14 +92,8 @@ class CodeSubmit extends Controller
                     break;
                 }
                 $j = $j + $iterations;
-                //print $splitted;
-                //$empty_array[] = $splitted;
-                // break;
-                //echo $splitted;
-                //echo "\n";
             }
-            //$execute = shell_exec($execute_command);
-            //$splitted = explode("\n", $execute);
+
             if ($num == 0) {
                 $submission->passed = true;
             }
@@ -99,20 +102,10 @@ class CodeSubmit extends Controller
             }
             
             $submission->save();
-
-
-            
+           
             return response()->json([
                 'satus_code' => 201,
                 'message' => 'Code Submitted',
-                //"title" => $title,
-                //"iterations" => $iterations,
-                //"directory" => $submission_directory,
-                //"compilecommand" => $compile_command,
-                //'output' => $splitted,
-                //'solution' => $solution[0],
-                //'solution2' => $solution[1],
-                //'path' => $path,
                 'message' => $empty_array
 
             ]);

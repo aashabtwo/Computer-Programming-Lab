@@ -62,7 +62,7 @@ In the page showing the list of practice problems, the front only need to show t
 #### 3) Lab Events
 The lab section will consist of a list of assignments, accepted submissions and rejected submissions. These may or may not be there. If no data for any of these are sent from the server, the assignments page should display an appropriate message
 
-**Assignments**
+**Assignments:**
 The array will be sent from the server, each element of the array will look like this:
 
 ```
@@ -86,7 +86,7 @@ The array will be sent from the server, each element of the array will look like
 ```
 In the list, the front only need to show the "title", "description", "marks" and "assigned_by" fields for each problem.
 
-**Accepted Submissions**
+**Accepted Submissions:**
 Is an array. For each element:
 
 ```
@@ -94,12 +94,12 @@ Is an array. For each element:
 	{
 		"code",
 		"remarks",
-		"accepted" // bool - False
+		"accepted" // bool - True
 	}
 	...
 ]
 
 ```
 
-**Rejected Submissions**
-Same as accepted submissions, except the "accepted" field will be 'True'
+**Rejected Submissions:**
+Same as accepted submissions, except the "accepted" field will be False

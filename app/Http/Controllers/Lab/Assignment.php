@@ -8,6 +8,7 @@ use App\Models\Lab;
 use App\Models\LabAssignment;
 use App\Models\LabProblem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class Assignment extends Controller
 {
@@ -81,6 +82,14 @@ class Assignment extends Controller
     
     // method to accept submission
     public function accept(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'remarks' => 'max:150'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Please keep the remarks under 100 characters'
+            ], 400);
+        }
         $submission = AssignmentSubmission::where('id', $request->route('s_id'))->get()->first();
         if ($request->remarks) {
             $submission->remarks = $request->remarks;
@@ -94,6 +103,14 @@ class Assignment extends Controller
     }
     // method to reject submissions
     public function reject(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'remarks' => 'max:150'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Please keep the remarks under 100 characters'
+            ], 400);
+        }
         $submission = AssignmentSubmission::where('id', $request->route('s_id'))->get()->first();
         if ($request->remarks) {
             $submission->remarks = $request->remarks;

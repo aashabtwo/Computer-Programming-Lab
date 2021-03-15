@@ -166,12 +166,6 @@ Route::get('lab/{id}/results/{bool}', [StudentLabController::class, 'accepts'])
 
 
 
-
-
-
-
-
-
 // just for testing
 Route::get('/some/definite/user', function(Request $request) {
     return $request->user()->id;
@@ -239,26 +233,3 @@ Route::get('sum/{code}/and/{values}', function(Request $request) {
     ]);
 });
 
-
-
-
-/**
- * "email": "snape@gmail.com","password": "testing111"
-  
- */
-/**
- * "name": "Aashab Tajwar",
-*	"email": "tajwar@gmail.com",
-*	"password": "testing111",
-*	"position": "Student"
- */
-
-/*
-{
-	
-	"email":"snape@gmail.com",
-	"name": "Professor Snape",
-	"position": "Teacher",
-	"password":"testing111"
-}
-*/
