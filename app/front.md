@@ -115,27 +115,249 @@ Same as accepted submissions, except the "accepted" field will be False
 ## Routes
 
 ### Get Routes
-1. **/api/practice/problems** -> Route to get the list of problems for students to practice
-2. **/api/practice/problems/{id}** -> Route to get one problem (for practice) corresponding to the id.
-3. **/api/lab/problems** -> Route to get a list of problems for teachers. (But cannot give them as assignment)
-4. **/api/lab/problems/{id}** -> Route to get one problem
+1. **/api/practice/problems** -> Route to get the list of problems for students to practice. The data will be sent as an array, and will look like:
+
+```
+[
+	// a single element of the array
+	{
+		"title",
+		"description",
+		"objective",
+		"task",
+		"input_content",
+		"output_content",
+		"iter_num",
+		"lab_head"
+	},
+	...
+]
+
+```
+Only "title" and "description" should be used to display the problem inside a card for each problem
+
+2. **/api/practice/problems/{id}** -> Route to get one problem (for practice) corresponding to the id. The problem should be fully described by showing all the elements excepted "iter_num".
+
+```
+{
+	"title",
+	"description",
+	"objective",
+	"task",
+	"input_content",
+	"output_content",
+	"iter_num",
+	"lab_head"
+}
+```
+
+3. **/api/lab/problems** -> Route to get a list of problems for teachers. (But cannot give them as assignment. Data will look like.
+```
+[	
+	// each elemnent
+	{
+		"title",
+		"description",
+		"objective",
+		"task",
+		"input_content",
+		"output_content",
+		"iter_num",
+		"marks"
+	},
+	...
+]
+
+```
+For each problem, only the "title", "description", and "marks" should be displayed.
+
+4. **/api/lab/problems/{id}** -> Route to get one problem. Data will look like:
+
+```
+{
+	"title",
+	"description",
+	"objective",
+	"task",
+	"input_content",
+	"output_content",
+	"iter_num",
+	"marks"
+},
+```
 5. **/api/labs-all** -> display all Labs that were created.
-6. **/api/labs** (Protected Route for teachers) -> shows a list of labs created by the authenticated teacher
+```
+[	
+	// each element
+	{
+		"lab_name",
+		"lab_category",
+		"department",
+	},
+	...
+]
+```
+6. **/api/labs** (Protected Route for teachers) -> shows a list of labs created by the authenticated teacher.
+
+```
+[	
+	// each element
+	{
+		"lab_name",
+		"lab_category",
+		"department",
+	},
+	...
+]
+```
+
 7. **/api/labs/{id}** -> (Protected Route for teachers) -> shows one of the labs created by the authenticated teacher.
 8. **/api/labs/{id}/problems** -> (Protected Route for teachers) -> shows a list of problems from which the authenticated teacher can select for assignments.
-9. **/api/labs/{id}/problems/{problem_id}** -> (Protected Route for teachers) -> shows one of the problems from which the authenticated teacher can select for assignments.
-10. **/api/labs/{id}/assignmentsubmissions** -> (Protected Route for teachers) -> Shows the list of assignment submissions
-11. **/api/labs/{id}/assignmentsubmissions/{submission_id}** -> (Protected Route for teachers) -> shows one of the submissions
-12. **/api/lab** (Protected route for students) -> Get the list of labs the student is registered in
-13. **/api/lab/{id}** (Protected route for students) -> Get one lab the student is registered in
-14. **/api/lab/{id}/assignments** (Protected route for students) -> Get the list of assignments for the lab
-15. **/api/lab/{id}/assignment/{assignment_id}** (Protected route for students) -> Get one assignment for the lab (shows all the details about the assignment)
-16. **/api/lab/{id}/results/{bool}** (Protected route for students) -> Get the submission results for students
+```
+[	
+	// each elemnent
+	{
+		"title",
+		"description",
+		"objective",
+		"task",
+		"input_content",
+		"output_content",
+		"iter_num",
+		"marks"
+	},
+	...
+]
 
+```
+
+9. **/api/labs/{id}/problems/{problem_id}** -> (Protected Route for teachers) -> shows one of the problems from which the authenticated teacher can select for assignments.
+```
+{
+	"title",
+	"description",
+	"objective",
+	"task",
+	"input_content",
+	"output_content",
+	"iter_num",
+	"marks"
+},
+```
+10. **/api/labs/{id}/assignmentsubmissions** -> (Protected Route for teachers) -> Shows the list of assignment submissions
+
+```
+[	
+	// each element
+	{
+		"title",
+		"code", // should be displayed inside <pre> tags
+		"submitted_by",
+		"accepted", // boolean
+		"reviewed", // boolean
+	},
+	...
+]
+```
+Each submission card should show "title" and "submitted_by".
+
+11. **/api/labs/{id}/assignmentsubmissions/{submission_id}** -> (Protected Route for teachers) -> shows one of the submissions.
+```
+{
+	"title",
+	"code", // should be displayed inside <pre> tags
+	"submitted_by",
+	"accepted", // boolean
+	"reviewed", // boolean
+}
+
+```
+12. **/api/lab** (Protected route for students) -> Get the list of labs the student is registered in
+```
+[	
+	// each element
+	{
+		"lab_name",
+		"lab_category",
+		"department",
+	},
+	...
+]
+```
+13. **/api/lab/{id}** (Protected route for students) -> Get one lab the student is registered in
+
+```
+{
+	"lab_name",
+	"lab_category",
+	"department",
+}
+```
+14. **/api/lab/{id}/assignments** (Protected route for students) -> Get the list of assignments for the lab.
+
+```
+[	
+	// each element
+	{
+		"title",
+		"description",
+		"objective",
+		"task",
+		"marks",
+		"input_content",
+		"output_content",
+		"iter_num",
+		"lab_name",
+		"lab_id",
+		"assigned_by",
+	},
+	...
+]
+```
+Each assignment card should show "title", "description", "assigned_by" and "marks".
+15. **/api/lab/{id}/assignment/{assignment_id}** (Protected route for students) -> Get one assignment for the lab (shows all the details about the assignment)
+
+```
+{
+	"title",
+	"description",
+	"objective",
+	"task",
+	"marks",
+	"input_content",
+	"output_content",
+	"iter_num",
+	"lab_name",
+	"lab_id",
+	"assigned_by",
+}
+
+```
+Not to show -> "lab_id", "input_content", "output_content".
+16. **/api/lab/{id}/results/{bool}** (Protected route for students) -> Get the submission results for students.
+```
+[	
+	// each element
+	{
+		"title",
+		"code", // should be displayed inside <pre> tags
+		"submitted_by",
+		"accepted", // boolean
+		"reviewed", // boolean
+	},
+	...
+]
+```
 
 ### Post Routes
-1. **/api/login** -> **LOGIN**: post request for loging in
-2. **/api/practice/problems/{id}** -> request route to submit submission file.
+1. **/api/login** -> **LOGIN**: post request for loging in. The request body should have:
+```
+{
+	"email",
+	"password"
+}
+```
+2. **/api/practice/problems/{id}** -> request route to submit submission file. The post request should send a file (multipart/form-data)
 3. **/api/createlab** -> **Create Lab** : request route to create a lab.
 4. **/api/lab/join/{id}** -> **Join Lab**: request route for students to join a lab.
 5. **/api/labs/{id}/problems/{problem_id}**: **Give Assignment**: (Protected route for teachers)request to give the problem with this id as assignment.
