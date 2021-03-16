@@ -115,9 +115,24 @@ Same as accepted submissions, except the "accepted" field will be False
 ## Routes
 
 ### Get Routes
-1) **/api/practice/problems** -> Route to get the list of problems for students to practice
-2) **/api/practice/problems/{id}** -> Route to get one problem (for practice) corresponding to the id.
-3) **/lab/problems** -> Route to get a list of problems for teachers to assign as assignments.
-4) **/lab/problems/{id}** -> Route to get one problem
-5) **/labs-all** -> display all Labs that were created.
-6) **/labs** -> 
+1. **/api/practice/problems** -> Route to get the list of problems for students to practice
+2. **/api/practice/problems/{id}** -> Route to get one problem (for practice) corresponding to the id.
+3. **/api/lab/problems** -> Route to get a list of problems for teachers. (But cannot give them as assignment)
+4. **/api/lab/problems/{id}** -> Route to get one problem
+5. **/api/labs-all** -> display all Labs that were created.
+6. **/api/labs** (Protected Route for teachers) -> shows a list of labs created by the authenticated teacher
+7. **/api/labs/{id}** -> (Protected Route for teachers) -> shows one of the labs created by the authenticated teacher.
+8. **/api/labs/{id}/problems** -> (Protected Route for teachers) -> shows a list of problems from which the authenticated teacher can select for assignments.
+9. **/api/labs/{id}/problems/{problem_id}** -> (Protected Route for teachers) -> shows one of the problems from which the authenticated teacher can select for assignments.
+10. **/api/labs/{id}/assignmentsubmissions** -> (Protected Route for teachers) -> Shows the list of assignment submissions
+11. **/api/labs/{id}/assignmentsubmissions/{submission_id}** -> (Protected Route for teachers) -> shows one of the submissions
+12. **/api/lab** (Protected route for students) -> Get the list of labs the student is registered in
+13. **/api/lab/{id}** (Protected route for students) -> Get one lab the student is registered in
+14. **/api/lab/{id}/assignments** (Protected route for students) -> Get the list of assignments for the lab
+15. **/api/lab/{id}/assignment/{assignment_id}** (Protected route for students) -> Get one assignment for the lab (shows all the details about the assignment)
+16. **/api/lab/{id}/results/{bool}** (Protected route for students) -> Get the submission results for students
+
+
+### Post Routes
+1. **/api/login** -> **LOGIN**: post request for loging in
+
