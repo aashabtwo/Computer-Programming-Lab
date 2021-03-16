@@ -12,6 +12,7 @@ use App\Http\Controllers\Lab\StudentJoin;
 use App\Http\Controllers\Lab\StudentLabController;
 use App\Http\Controllers\Practice\ProblemCreationController;
 use App\Http\Controllers\Practice\ProblemQuery;
+use App\Http\Controllers\Profile\InfoController;
 use App\Http\Controllers\Submit\CodeSubmit;
 use App\Models\Lab;
 use App\Models\LabProblem;
@@ -132,7 +133,11 @@ Route::put('/labs/{id}/assignmentsubmissions/{s_id}/reject', [Assignment::class,
     ->middleware('checkuser')
     ->middleware('lab');
 
-
+// route to run submitted code
+Route::post('/labs/{id}/assignmentsubmissions/{s_id}/runcode', [Assignment::class, 'runCode'])
+    ->middleware('auth:api')
+    ->middleware('checkuser')
+    ->middleware('lab');
 
 // Route to show given assignments
 Route::get('lab/assignments', [Assignment::class, 'showAssignments']);
@@ -164,6 +169,14 @@ Route::get('lab/{id}/results/{bool}', [StudentLabController::class, 'accepts'])
     ->middleware('auth:api')
     ->middleware('labstudent');  // if bool is true, show accepted assignments, else show rejected ones
 
+
+// PROFILE BASED ROUTES
+// route for users to add more info
+Route::post('/profile/teaceher/setup', [InfoController::class, 'addInfoTeacher'])
+    ->middleware('auth:api')
+    ->middleware('checkuser');
+Route::post('/profile/student/setup', [InfoController::class, 'addInfoStudent'])
+    ->middleware('auth:api');
 
 
 // just for testing
@@ -230,6 +243,15 @@ Route::get('sum/{code}/and/{values}', function(Request $request) {
     return response()->json([ 
         'a' => $code,
         'b' => $values
+    ]);
+});
+
+// request body line test
+Route::post('/line', function(Request $request) {
+    $a = explode("\r\n", $request->line);
+    return response()->json([
+        'res' => $a[0],
+        'res2' => $a[1]
     ]);
 });
 

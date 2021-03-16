@@ -122,4 +122,13 @@ class Assignment extends Controller
             'message' => 'Submission has been rejected'
         ]);
     }
+    
+    // method to run submitted code
+    public function runCode(Request $request) {
+        $submission = AssignmentSubmission::where('id', $request->route('s_id'))->get()->first();
+        // run against one test case?
+        return response()->json([
+            'path' => $submission->code_path
+        ]);
+    }
 }
