@@ -135,4 +135,12 @@ Same as accepted submissions, except the "accepted" field will be False
 
 ### Post Routes
 1. **/api/login** -> **LOGIN**: post request for loging in
+2. **/api/practice/problems/{id}** -> request route to submit submission file.
+3. **/api/createlab** -> **Create Lab** : request route to create a lab.
+4. **/api/lab/join/{id}** -> **Join Lab**: request route for students to join a lab.
+5. **/api/labs/{id}/problems/{problem_id}**: **Give Assignment**: (Protected route for teachers)request to give the problem with this id as assignment.
+7. **/api/labs/{id}/assignmentsubmissions/{submission_id}/runcode** -> **Run Code**: (Protected route for teachers): run submitted code
+8. **/api/lab/{id}/assignment/{assignment_id}** -> **Submit Assignment**: (Protected route for students): Run submitted code
 
+### Delete Requests
+1. **/api/logout** -> **Logout**: logout user
