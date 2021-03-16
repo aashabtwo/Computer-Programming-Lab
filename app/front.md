@@ -16,6 +16,7 @@ Will contain a list of labs the student has joined. An array will be sent and ea
 		"department",
 		"lab_teachers"
 	}
+	...
 ]
 
 
@@ -36,7 +37,14 @@ Will consist of lab heads (lab one, lab two, etc.). Data to be sent from server
 For each of these lab, there will be three different urls: theory, practice, lab events
 
 #### 1) Theory
-Consists basic theory around what the lab will take place
+Consists basic theory around what the lab will take place. The data that will be sent will be like:
+
+```
+{
+	"theory" : "<theory_data>"
+}
+```
+This data is to be displayed.
 
 #### 2) Practice
 Will consist of practice problems for students to solve. An array of data will be sent from the server. Each of the array memeber will look like this
@@ -103,3 +111,13 @@ Is an array. For each element:
 
 **Rejected Submissions:**
 Same as accepted submissions, except the "accepted" field will be False
+
+## Routes
+
+### Get Routes
+1) **/api/practice/problems** -> Route to get the list of problems for students to practice
+2) **/api/practice/problems/{id}** -> Route to get one problem (for practice) corresponding to the id.
+3) **/lab/problems** -> Route to get a list of problems for teachers to assign as assignments.
+4) **/lab/problems/{id}** -> Route to get one problem
+5) **/labs-all** -> display all Labs that were created.
+6) **/labs** -> 

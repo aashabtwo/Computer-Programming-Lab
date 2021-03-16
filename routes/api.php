@@ -54,17 +54,17 @@ Route::get('/info', function() {
 
 // create practice problems
 Route::post('createproblem', [ProblemCreationController::class, 'create']);
-Route::get('problems', [ProblemQuery::class, 'getAllProblems']);
+Route::get('practice/problems', [ProblemQuery::class, 'getAllProblems']);
 
 // create lab problem
 Route::post('createlabproblems', [LabProblemCreationController::class, 'create']);
 
 
 // get one problem
-Route::get('problems/{id}', [ProblemQuery::class, 'getOneProblem']);
+Route::get('practice/problems/{id}', [ProblemQuery::class, 'getOneProblem']);
 
 // submit problem
-Route::post('problems/{id}', [CodeSubmit::class, 'submit'])->middleware('auth:api')->middleware('checkuser');
+Route::post('practice/problems/{id}', [CodeSubmit::class, 'submit'])->middleware('auth:api')->middleware('checkuser');
 
 
 // get all lab problems
