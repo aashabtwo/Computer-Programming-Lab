@@ -11,7 +11,7 @@ class Problem extends Model
 
     protected $table = 'problems';
     protected $fillable = [
-        //'head',
+        'head',
         'title',
         'description',
         'objective',

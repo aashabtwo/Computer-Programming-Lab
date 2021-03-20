@@ -10,7 +10,7 @@ class LabProblem extends Model
     use HasFactory;
     protected $table = 'lab_problems';
     protected $fillable = [
-        //'head',
+        'head',
         'title',
         'description',
         'objective',

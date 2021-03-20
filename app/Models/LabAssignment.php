@@ -10,6 +10,7 @@ class LabAssignment extends Model
     use HasFactory;
     protected $table = 'lab_assignments';
     protected $fillable = [
+        'head',
         'title',
         'description',
         'objective',
