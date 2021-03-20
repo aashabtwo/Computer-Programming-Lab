@@ -47,6 +47,7 @@ class AssignmentSubmission extends Controller
             
             $assignment_submission = new ModelsAssignmentSubmission();
             $assignment_submission->lab_assignment_id = $assignment_id;
+            $assignment_submission->submitted_by = $request->user()->name;
             $assignment_submission->lab_id = $lab_id;
             $assignment_submission->user_id = $user_id;
             $assignment_submission->code_path = '/storage/'. $filePath;
