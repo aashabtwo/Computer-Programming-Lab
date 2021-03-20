@@ -20,6 +20,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use League\OAuth2\Server\RequestEvent;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,19 +44,22 @@ Route::get('/login', function() {
     ]);
 })->name('login');
 
-
+// user registration, login and logout routes
 Route::post('createuser', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
+
+
 Route::get('/info', function() {
     return response()->json([
         "message"=>"Message only for authenticated users"
     ]);
 })->middleware('auth:api');
 
+
 // create practice problems
-Route::post('createproblem', [ProblemCreationController::class, 'create']);
-Route::get('practice/problems', [ProblemQuery::class, 'getAllProblems']);
+Route::post('createproblem/{lab_no}', [ProblemCreationController::class, 'create']);
+Route::get('/{lab_no}/practice/problems', [ProblemQuery::class, 'getAllProblems']);
 
 // create lab problem
 Route::post('createlabproblems', [LabProblemCreationController::class, 'create']);
@@ -255,3 +260,11 @@ Route::post('/line', function(Request $request) {
     ]);
 });
 
+// query param test #
+Route::get('/{code}/hey', function(Request $request) {
+    $a = $request->route('code');
+    return response()->json([
+        'code' => $a
+    ]);
+});
+// WORKS!
