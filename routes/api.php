@@ -59,10 +59,12 @@ Route::get('/info', function() {
 
 // create practice problems
 Route::post('createproblem/{lab_no}', [ProblemCreationController::class, 'create']);
+
+// get the list of practice problems for a specific lab day
 Route::get('/{lab_no}/practice/problems', [ProblemQuery::class, 'getAllProblems']);
 
 // create lab problem
-Route::post('createlabproblems', [LabProblemCreationController::class, 'create']);
+Route::post('createlabproblem/{lab_no}', [LabProblemCreationController::class, 'create']);
 
 
 // get one problem
@@ -72,8 +74,9 @@ Route::get('practice/problems/{id}', [ProblemQuery::class, 'getOneProblem']);
 Route::post('practice/problems/{id}', [CodeSubmit::class, 'submit'])->middleware('auth:api')->middleware('checkuser');
 
 
-// get all lab problems
-Route::get('lab/problems', [LabProblemQuery::class, 'getAllProblems']);
+// get all lab problems for a specific lab day (lab day as in lab one, lab two)
+Route::get('{lab_no}/lab/problems', [LabProblemQuery::class, 'getAllProblems']);
+
 // get one lab problem
 Route::get('lab/problems/{id}', [LabProblemQuery::class, 'getOneProblem']);
 
@@ -98,7 +101,7 @@ Route::get('labs', [LabQueries::class, 'labs'])->middleware('auth:api')->middlew
 Route::get('labs/{id}', [LabQueries::class, 'oneLab'])->middleware('auth:api')->middleware('checkuser');
 
 // route to see lab problems (from which the teachers can select assignments)
-Route::get('labs/{id}/problems', [LabQueries::class, 'problems'])
+Route::get('{lab_no}/labs/{id}/problems', [LabQueries::class, 'problems'])
     ->middleware('auth:api')
     ->middleware('checkuser')
     ->middleware('lab');
@@ -155,7 +158,7 @@ Route::get('lab', [StudentLabController::class, 'labs'])->middleware('auth:api')
 Route::get('lab/{id}', [StudentLabController::class, 'lab'])->middleware('auth:api');
 
 // Route to acess assignments
-Route::get('lab/{id}/assignments', [StudentLabController::class, 'labAssignments'])
+Route::get('{lab_no}/lab/{id}/assignments', [StudentLabController::class, 'labAssignments'])
     ->middleware('auth:api')
     ->middleware('labstudent');
 

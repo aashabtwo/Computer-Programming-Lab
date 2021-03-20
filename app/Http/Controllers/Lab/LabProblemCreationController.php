@@ -15,6 +15,7 @@ class LabProblemCreationController extends Controller
          */
         $problem = new LabProblem();
         //$problem->head = $request->head;
+        $problem->head = $request->route('lab_no');
         $problem->title = $request->title;
         $problem->description = $request->description;
         $problem->objective = $request->objective;

@@ -46,7 +46,7 @@ class LabQueries extends Controller
     // method to show lab problems
     public function problems (Request $request) {
         
-        $problems = LabProblem::get()->toJson(JSON_PRETTY_PRINT);
+        $problems = LabProblem::where('head', $request->route('lab_no'))->get()->toJson(JSON_PRETTY_PRINT);
         return response($problems, 200);
         
     }

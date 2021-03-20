@@ -28,6 +28,7 @@ class Assignment extends Controller
         $lab_problem = LabProblem::where('id', $problem_id)->get()->first();
 
         $assignment = new LabAssignment();
+        $assignment->head = $lab_problem->head;
         $assignment->title = $lab_problem->title;
         $assignment->description = $lab_problem->description;
         $assignment->objective = $lab_problem->objective;

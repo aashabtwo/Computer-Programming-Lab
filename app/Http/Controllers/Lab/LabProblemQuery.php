@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 class LabProblemQuery extends Controller
 {
     // get all lab problems
-    public function getAllProblems() {
-        $problems = LabProblem::get()->toJson(JSON_PRETTY_PRINT);
+    public function getAllProblems(Request $request) {
+        $problems = LabProblem::where('head', $request->route('lab_no'))->get()->toJson(JSON_PRETTY_PRINT);
         return response($problems, 200);
     }
     // get single lab problem

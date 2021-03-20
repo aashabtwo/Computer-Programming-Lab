@@ -54,7 +54,7 @@ class StudentLabController extends Controller
          * query all the given assignments with this lab id
          */
         $lab_id = $request->route('id');
-        $assignments = LabAssignment::where('lab_id', $lab_id)->get()->toJson(JSON_PRETTY_PRINT);
+        $assignments = LabAssignment::where('lab_id', $lab_id)->where('head', $request->route('lab_no'))->get()->toJson(JSON_PRETTY_PRINT);
         return response($assignments, 200);
     }
     // method to check one assignment
