@@ -94,30 +94,42 @@ class AuthController extends Controller
             ], 400);
         }
 
-
-        $user = User::where('email', $request->email)->first();
-        
-        if ($user) {
-            if (Hash::check($request->password, $user->password)) {
-                $token = $user->createToken('Password Grant client')->accessToken;
-                $response = ['token'=>$token];
-                return response()->json([
-                    'status_code'=>200,
-                    'message'=>'Logged in',
-                    'token'=>$token
-                ]);
+        try {
+            $user = User::where('email', $request->email)->first();
+            
+            if ($user) {
+                if (Hash::check($request->password, $user->password)) {
+                    $token = $user->createToken('Password Grant client')->accessToken;
+                    $response = ['token'=>$token];
+                    return response()->json([
+                        'status_code'=>200,
+                        'message'=>'Logged in',
+                        'token'=>$token
+                    ]);
+                }
+                else {
+                    Log::channel('loginmessages')->alert([
+                        'Attempted Login with wrong PASSWORD'
+                    ]);
+                    return response()->json([
+                        'status_code'=>400,
+                        'message'=>"Your password does not match"
+                    ]);
+                }
             }
             else {
+                Log::channel('loginmessages')->alert([
+                    'Attempted Login with wrong EMAIL'
+                ]);
                 return response()->json([
-                    'status_code'=>400,
-                    'message'=>"password does not match"
+                    'status_code'=>422,
+                    'message'=>"No user with this email found"
                 ]);
             }
-        }
-        else {
+        }   
+        catch(\Exception $exception) {
             return response()->json([
-                'status_code'=>422,
-                'message'=>"No user found"
+                'message' => $exception->getMessage()
             ]);
         }
     }

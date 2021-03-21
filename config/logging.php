@@ -58,7 +58,18 @@ return [
             'path' => storage_path('logs/registration_err.log'),
             'level' => env('LOG_LEVEL', 'debug'),
         ], 
-
+        // failed login messages
+        'loginmessages' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/login_err.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+        // failed lab problem assigning errors
+        'assignments' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/assignment_err.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
