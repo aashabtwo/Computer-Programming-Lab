@@ -37,7 +37,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['single',],
             'ignore_exceptions' => false,
         ],
 
@@ -46,6 +46,18 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
         ],
+        // test
+        'errors' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/err.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+        // registration errors channel
+        'regerrors' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/registration_err.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ], 
 
         'daily' => [
             'driver' => 'daily',

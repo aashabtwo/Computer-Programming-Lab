@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    //
+    // find a way to log errors
     public function register(Request $request) {
         /**
          * validate and sanitize request body
@@ -22,33 +23,52 @@ class AuthController extends Controller
          * Else, create a new user and send a status code of 200 with a success message
          * NOTE: make sure the field 'position' is added to the fillable
          */
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:250',
-            'email' => 'required|email',
-            'password' => 'required',
-            'position' => 'required|max:12',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status_code' => 400,
-                'message' => 'Bad Request'
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|max:250',
+                'email' => 'required|email',
+                'password' => 'required',
+                'position' => 'required|max:12',
             ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status_code' => 400,
+                    'message' => 'Bad Request'
+                ]);
+            }
+            else {
+                // try -> registering
+                $user = new User();
+                $user->name = $request->name;
+                $user->position = $request->position;
+                $user->email = $request->email;
+                $user->password = Hash::make($request->password);
+                
+                $user->save();
+                $token = $user->createToken('Password Grant client')->accessToken;
+                $response = ['token'=>$token];
+                
+                return response()->json([
+                    'status_code' => 201,
+                    'message' => 'User created successfully',
+                    'token'=>$token
+                ]);
+                // catch -> if any error occues, and log the error in the log file
+                // $exception -> getMessage() (exception message)
+                // get_class($exception) (exception class)
+            }
         }
-        else {
-            $user = new User();
-            $user->name = $request->name;
-            $user->position = $request->position;
-            $user->email = $request->email;
-            $user->password = Hash::make($request->password);
-            
-            $user->save();
-            $token = $user->createToken('Password Grant client')->accessToken;
-            $response = ['token'=>$token];
-            
+        catch (\Exception $exception) {
+            $exception_class = get_class($exception);
+            $exception_message = $exception->getMessage();
+            // log the exception class and message in registration errors channel
+            Log::channel('regerrors')->error([
+                'message' => $exception_message,
+                'class' => $exception_class
+            ]);
+            // return a response to user
             return response()->json([
-                'status_code' => 201,
-                'message' => 'User created successfully',
-                'token'=>$token
+                'message' => $exception_message
             ]);
         }
 
