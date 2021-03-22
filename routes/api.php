@@ -18,6 +18,7 @@ use App\Models\Lab;
 use App\Models\LabProblem;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -280,4 +281,12 @@ Route::get('/log', function() {
     // log messages
     // emergeney, alert, critical, error, warning, notice, debug
     // Log::channel('errors')->alert(['message' => 'asdasdasds']);
+});
+
+// password hashing test
+Route::get('/password', function() {
+    $hashed_password = Hash::make('password');
+    return response()->json([
+        'hashed password' => $hashed_password
+    ]);
 });
