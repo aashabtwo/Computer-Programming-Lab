@@ -11,6 +11,7 @@ use App\Http\Controllers\Lab\LabProblemQuery;
 use App\Http\Controllers\Lab\LabQueries;
 use App\Http\Controllers\Lab\StudentJoin;
 use App\Http\Controllers\Lab\StudentLabController;
+use App\Http\Controllers\Password\ForgotPasswordController;
 use App\Http\Controllers\Practice\ProblemCreationController;
 use App\Http\Controllers\Practice\ProblemQuery;
 use App\Http\Controllers\Profile\InfoController;
@@ -52,7 +53,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
  * with this, all users will be logged out except for the admin
  */
 // delete user
-Route::delete('/admin/deleteuser/{id}'. [AdminController::class, 'deleteUser'])
+Route::delete('/admin/deleteuser/{id}', [AdminController::class, 'deleteUser'])
     ->middleware('auth:api')
     ->middleware('admin');
 
@@ -63,6 +64,22 @@ Route::get('/login', function() {
         "Message" => "LOGIN FIRST"
     ]);
 })->name('login');
+
+
+// PASSWORD RESET ROUTE
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendLink'])
+    ->middleware('guest');
+
+    // reset password
+Route::get('/reset-password/{token}')->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])
+    ->middleware('guest')->name('password.update');
+
+
+
+
+
+
 
 // user registration, login and logout routes
 Route::post('createuser', [AuthController::class, 'register']);
@@ -321,3 +338,18 @@ Route::get('/q', function() {
     ]);
 });
 // WORKS
+
+// time test
+Route::get('/time', function() {
+    $delay = json_encode(now());
+    return response()->json([
+        'delay' => $delay
+    ]);
+});
+
+// guest middleware test
+Route::get('/lock', function() {
+    return response()->json([
+        'string' => 'some words'
+    ]);
+})->middleware('guest');
