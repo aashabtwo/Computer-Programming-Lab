@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\FileUpload;
 use App\Http\Controllers\Lab\Assignment;
@@ -40,6 +41,23 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// ADMIN PRIVILEGE ROUTES
+
+// revoke tokens for all users
+/**
+ * In order to revoke all access tokens, you have to manually enter the mysql database
+ * then paste the following command 
+ * "UPDATE oauth_access_tokens SET revoked = 1;"
+ * you can also state the condition "WHERE user_id != <admin user id>"
+ * with this, all users will be logged out except for the admin
+ */
+// delete user
+Route::delete('/admin/deleteuser/{id}'. [AdminController::class, 'deleteUser'])
+    ->middleware('auth:api')
+    ->middleware('admin');
+
+
+
 Route::get('/login', function() {
     return response()->json([
         "Message" => "LOGIN FIRST"
@@ -59,14 +77,18 @@ Route::get('/info', function() {
 })->middleware('auth:api');
 
 
-// create practice problems
-Route::post('createproblem/{lab_no}', [ProblemCreationController::class, 'create']);
+// create practice problems (only admins can do this)
+Route::post('createproblem/{lab_no}', [ProblemCreationController::class, 'create'])
+    ->middleware('auth:api')
+    ->middleware('admin');
 
 // get the list of practice problems for a specific lab day
 Route::get('/{lab_no}/practice/problems', [ProblemQuery::class, 'getAllProblems']);
 
-// create lab problem
-Route::post('createlabproblem/{lab_no}', [LabProblemCreationController::class, 'create']);
+// create lab problem (admin only)
+Route::post('createlabproblem/{lab_no}', [LabProblemCreationController::class, 'create'])
+    ->middleware('auth:api')
+    ->middleware('admin');
 
 
 // get one problem
@@ -290,3 +312,12 @@ Route::get('/password', function() {
         'hashed password' => $hashed_password
     ]);
 });
+
+// NOT EQUAL query test
+Route::get('/q', function() {
+    $users = User::where('id', '!=', 3)->get();
+    return response()->json([
+        'users' => $users
+    ]);
+});
+// WORKS
