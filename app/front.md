@@ -344,5 +344,10 @@ Not to show -> "lab_id", "input_content", "output_content".
 7. **/api/labs/{id}/assignmentsubmissions/{submission_id}/runcode** -> **Run Code**: (Protected route for teachers): run submitted code
 8. **/api/lab/{id}/assignment/{assignment_id}** -> **Submit Assignment**: (Protected route for students): Run submitted code
 
+### Put Requests
+1.  **/api/labs/{id}/assignmentsubmissions/{submission_id}/accept** -> Route with which teachers will mark a submissions as accepted
+2. **/api/labs/{id}/assignmentsubmissions/{submission_id}/accept** -> Route with which teachers will mark a submission as rejected
+
+
 ### Delete Requests
 1. **/api/logout** -> **Logout**: logout user
