@@ -64,6 +64,7 @@ class AssignmentSubmission extends Controller
                  * run test cases against solution lines
                  */
             $compile_command = 'gcc -lm ' . $submissions_directory . '' . $submissionName;
+            // handle compilation exception
             exec($compile_command);
             if ($title_trimmed == 'HelloWorldinC') {
                 // execute code without inputs

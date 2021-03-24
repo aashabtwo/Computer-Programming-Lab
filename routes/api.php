@@ -94,25 +94,112 @@ Route::get('/info', function() {
 })->middleware('auth:api');
 
 
-// create practice problems (only admins can do this)
-Route::post('createproblem/{lab_no}', [ProblemCreationController::class, 'create'])
-    ->middleware('auth:api')
-    ->middleware('admin');
+// authenticated routes
+Route::group(['middleware' => 'auth:api'], function() {
+    // create practice problems (only admins can do this)
+    Route::post('createproblem/{lab_no}', [ProblemCreationController::class, 'create'])
+        ->middleware('admin');
+    // create lab problem (admin only)
+    Route::post('createlabproblem/{lab_no}', [LabProblemCreationController::class, 'create'])
+        ->middleware('admin');
+
+    // submit problem
+    Route::post('practice/problems/{id}', [CodeSubmit::class, 'submit'])
+        ->middleware('checkuser');
+    // create lab
+    Route::post('createlab', [LabCreation::class, 'createLab'])
+        ->middleware('checkuser');
+    // register student to a lab
+    Route::post('lab/join/{id}', [StudentJoin::class, 'registerStudent']);
+    // route to see lab problems (from which the teachers can select assignments)
+    Route::get('{lab_no}/labs/{id}/problems', [LabQueries::class, 'problems'])
+        ->middleware('checkuser')
+        ->middleware('lab');
+    // route to see one lab problem
+    Route::get('labs/{id}/problems/{p_id}', [LabQueries::class, 'problem'])
+        ->middleware('checkuser')
+        ->middleware('lab');
+
+    // Route to assign a lab problem (giving assignment)
+    Route::post('labs/{id}/problems/{p_id}', [Assignment::class, 'giveAssignment'])
+        ->middleware('checkuser')
+        ->middleware('lab');
+    // Route to check submissions by students - Teacher's route
+    Route::get('labs/{id}/assignmentsubmissions', [Assignment::class, 'submissions'])
+        ->middleware('checkuser')
+        ->middleware('lab');
+
+    // get the labs created by the teacher
+    Route::get('labs', [LabQueries::class, 'labs'])
+        ->middleware('checkuser');
+    // get one lab created by the teacher
+    Route::get('labs/{id}', [LabQueries::class, 'oneLab'])
+        ->middleware('checkuser');
+    
+    // Route to check each submission
+    Route::get('/labs/{id}/assignmentsubmissions/{s_id}', [Assignment::class, 'submission'])
+        ->middleware('checkuser')
+        ->middleware('lab');
+
+    // route to accept the submission
+    Route::put('/labs/{id}/assignmentsubmissions/{s_id}/accept', [Assignment::class, 'accept'])
+        ->middleware('checkuser')
+        ->middleware('lab');
+
+    Route::put('/labs/{id}/assignmentsubmissions/{s_id}/reject', [Assignment::class, 'reject'])
+        ->middleware('checkuser')
+        ->middleware('lab');
+
+    // route to run submitted code
+    Route::post('/labs/{id}/assignmentsubmissions/{s_id}/runcode', [Assignment::class, 'runCode'])
+        ->middleware('checkuser')
+        ->middleware('lab');
+    
+    // lab dashboard for students
+    Route::get('lab', [StudentLabController::class, 'labs']);
+
+    // route to access one lab
+    Route::get('lab/{id}', [StudentLabController::class, 'lab']);
+
+    // Route to acess assignments
+    Route::get('{lab_no}/lab/{id}/assignments', [StudentLabController::class, 'labAssignments'])
+        ->middleware('labstudent');
+
+    // route to access one assignment
+    Route::get('lab/{id}/assignments/{assignment_id}', [StudentLabController::class, 'oneLabAssignment'])
+        ->middleware('labstudent');
+
+    // route to submit assignment
+    Route::post('lab/{id}/assignments/{assignment_id}', [AssignmentSubmission::class, 'submit'])
+        ->middleware('labstudent');
+
+    // route for students to check submission results
+    Route::get('lab/{id}/results/{bool}', [StudentLabController::class, 'accepts'])
+        ->middleware('labstudent');  // if bool is true, show accepted assignments, else show rejected ones
+
+
+    // PROFILE BASED ROUTES
+    // route for users to add more info
+    Route::post('/profile/teaceher/setup', [InfoController::class, 'addInfoTeacher'])
+        ->middleware('checkuser');
+
+    Route::post('/profile/student/setup', [InfoController::class, 'addInfoStudent']);
+
+
+
+
+});
+
+
+
 
 // get the list of practice problems for a specific lab day
 Route::get('/{lab_no}/practice/problems', [ProblemQuery::class, 'getAllProblems']);
 
-// create lab problem (admin only)
-Route::post('createlabproblem/{lab_no}', [LabProblemCreationController::class, 'create'])
-    ->middleware('auth:api')
-    ->middleware('admin');
 
 
 // get one problem
 Route::get('practice/problems/{id}', [ProblemQuery::class, 'getOneProblem']);
-
-// submit problem
-Route::post('practice/problems/{id}', [CodeSubmit::class, 'submit'])->middleware('auth:api')->middleware('checkuser');
 
 
 // get all lab problems for a specific lab day (lab day as in lab one, lab two)
@@ -123,109 +210,19 @@ Route::get('lab/problems/{id}', [LabProblemQuery::class, 'getOneProblem']);
 
 
 
-// create lab
-Route::post('createlab', [LabCreation::class, 'createLab'])
-    ->middleware('auth:api')
-    ->middleware('checkuser');
 
 // get labs
 Route::get('labs-all', [LabQueries::class, 'getAllLabs']);
 // get lab teachers
 Route::get('labteachers', [LabQueries::class, 'getAllLabTeachers']);
 
-// register student to a lab
-Route::post('lab/join/{id}', [StudentJoin::class, 'registerStudent'])->middleware('auth:api');
 
-// get the labs created by the teacher
-Route::get('labs', [LabQueries::class, 'labs'])->middleware('auth:api')->middleware('checkuser');
-// get one lab created by the teacher
-Route::get('labs/{id}', [LabQueries::class, 'oneLab'])->middleware('auth:api')->middleware('checkuser');
 
-// route to see lab problems (from which the teachers can select assignments)
-Route::get('{lab_no}/labs/{id}/problems', [LabQueries::class, 'problems'])
-    ->middleware('auth:api')
-    ->middleware('checkuser')
-    ->middleware('lab');
 
-// route to see one lab problem
-Route::get('labs/{id}/problems/{p_id}', [LabQueries::class, 'problem'])
-    ->middleware('auth:api')
-    ->middleware('checkuser')
-    ->middleware('lab');
-
-// Route to assign a lab problem (giving assignment)
-Route::post('labs/{id}/problems/{p_id}', [Assignment::class, 'giveAssignment'])
-    ->middleware('auth:api')
-    ->middleware('checkuser')
-    ->middleware('lab');
-
-// Route to check submissions by students - Teacher's route
-Route::get('labs/{id}/assignmentsubmissions', [Assignment::class, 'submissions'])
-    ->middleware('auth:api')
-    ->middleware('checkuser')
-    ->middleware('lab');
-
-// Route to check each submission
-Route::get('/labs/{id}/assignmentsubmissions/{s_id}', [Assignment::class, 'submission'])
-    ->middleware('auth:api')
-    ->middleware('checkuser')
-    ->middleware('lab');
-
-// route to accept the submission
-Route::put('/labs/{id}/assignmentsubmissions/{s_id}/accept', [Assignment::class, 'accept'])
-    ->middleware('auth:api')
-    ->middleware('checkuser')
-    ->middleware('lab');
-
-Route::put('/labs/{id}/assignmentsubmissions/{s_id}/reject', [Assignment::class, 'reject'])
-    ->middleware('auth:api')
-    ->middleware('checkuser')
-    ->middleware('lab');
-
-// route to run submitted code
-Route::post('/labs/{id}/assignmentsubmissions/{s_id}/runcode', [Assignment::class, 'runCode'])
-    ->middleware('auth:api')
-    ->middleware('checkuser')
-    ->middleware('lab');
 
 // Route to show given assignments
 Route::get('lab/assignments', [Assignment::class, 'showAssignments']);
 
-
-// lab dashboard for students
-Route::get('lab', [StudentLabController::class, 'labs'])->middleware('auth:api');
-
-// route to access one lab
-Route::get('lab/{id}', [StudentLabController::class, 'lab'])->middleware('auth:api');
-
-// Route to acess assignments
-Route::get('{lab_no}/lab/{id}/assignments', [StudentLabController::class, 'labAssignments'])
-    ->middleware('auth:api')
-    ->middleware('labstudent');
-
-// route to access one assignment
-Route::get('lab/{id}/assignments/{assignment_id}', [StudentLabController::class, 'oneLabAssignment'])
-    ->middleware('auth:api')
-    ->middleware('labstudent');
-
-// route to submit assignment
-Route::post('lab/{id}/assignments/{assignment_id}', [AssignmentSubmission::class, 'submit'])
-    ->middleware('auth:api')
-    ->middleware('labstudent');
-
-// route for students to check submission results
-Route::get('lab/{id}/results/{bool}', [StudentLabController::class, 'accepts'])
-    ->middleware('auth:api')
-    ->middleware('labstudent');  // if bool is true, show accepted assignments, else show rejected ones
-
-
-// PROFILE BASED ROUTES
-// route for users to add more info
-Route::post('/profile/teaceher/setup', [InfoController::class, 'addInfoTeacher'])
-    ->middleware('auth:api')
-    ->middleware('checkuser');
-Route::post('/profile/student/setup', [InfoController::class, 'addInfoStudent'])
-    ->middleware('auth:api');
 
 
 // just for testing
