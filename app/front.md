@@ -151,26 +151,6 @@ Only "title" and "description" should be used to display the problem inside a ca
 }
 ```
 
-3. **/api/lab/problems** -> Route to get a list of problems for teachers. (But cannot give them as assignment. Data will look like.
-```
-[	
-	// each elemnent
-	{
-		"title",
-		"description",
-		"objective",
-		"task",
-		"input_content",
-		"output_content",
-		"iter_num",
-		"marks"
-	},
-	...
-]
-
-```
-For each problem, only the "title", "description", and "marks" should be displayed.
-
 4. **/api/lab/problems/{id}** -> Route to get one problem. Data will look like:
 
 ```
