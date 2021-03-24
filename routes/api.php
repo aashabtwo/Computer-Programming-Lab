@@ -94,66 +94,72 @@ Route::get('/info', function() {
 })->middleware('auth:api');
 
 
-// authenticated routes
+// AUTHENTICATED ROUTES
 Route::group(['middleware' => 'auth:api'], function() {
-    // create practice problems (only admins can do this)
-    Route::post('createproblem/{lab_no}', [ProblemCreationController::class, 'create'])
-        ->middleware('admin');
-    // create lab problem (admin only)
-    Route::post('createlabproblem/{lab_no}', [LabProblemCreationController::class, 'create'])
-        ->middleware('admin');
+    
+    // ADMIN ROUTES
+    Route::group(['middleware' => 'admin'], function() {
+            // create practice problems (only admins can do this)
+        Route::post('createproblem/{lab_no}', [ProblemCreationController::class, 'create']);
+        // create lab problem (admin only)
+        Route::post('createlabproblem/{lab_no}', [LabProblemCreationController::class, 'create']);
 
-    // submit problem
-    Route::post('practice/problems/{id}', [CodeSubmit::class, 'submit'])
-        ->middleware('checkuser');
-    // create lab
-    Route::post('createlab', [LabCreation::class, 'createLab'])
-        ->middleware('checkuser');
+    });
+
+    // TEACHERS' ROUTES
+    Route::group(['middleware' => 'checkuser'], function() {
+        // submit problem
+        Route::post('practice/problems/{id}', [CodeSubmit::class, 'submit']);
+        
+        // create lab
+        Route::post('createlab', [LabCreation::class, 'createLab']);
+        
+        // route to see lab problems (from which the teachers can select assignments)
+        Route::get('{lab_no}/labs/{id}/problems', [LabQueries::class, 'problems'])
+            ->middleware('lab');
+        // route to see one lab problem
+        Route::get('labs/{id}/problems/{p_id}', [LabQueries::class, 'problem'])
+            ->middleware('lab');
+
+            // Route to assign a lab problem (giving assignment)
+        Route::post('labs/{id}/problems/{p_id}', [Assignment::class, 'giveAssignment'])
+        ->middleware('checkuser')
+        ->middleware('lab');
+        // Route to check submissions by students - Teacher's route
+        Route::get('labs/{id}/assignmentsubmissions', [Assignment::class, 'submissions'])
+            ->middleware('lab');
+
+        // get the labs created by the teacher
+        Route::get('labs', [LabQueries::class, 'labs']);
+
+        // get one lab created by the teacher
+        Route::get('labs/{id}', [LabQueries::class, 'oneLab']);
+
+        // Route to check each submission
+        Route::get('/labs/{id}/assignmentsubmissions/{s_id}', [Assignment::class, 'submission'])
+            ->middleware('lab');
+
+        // route to accept the submission
+        Route::put('/labs/{id}/assignmentsubmissions/{s_id}/accept', [Assignment::class, 'accept'])
+            ->middleware('lab');
+
+        Route::put('/labs/{id}/assignmentsubmissions/{s_id}/reject', [Assignment::class, 'reject'])
+            ->middleware('lab');
+
+        // route to run submitted code
+        Route::post('/labs/{id}/assignmentsubmissions/{s_id}/runcode', [Assignment::class, 'runCode'])
+            ->middleware('lab');
+        // PROFILE BASED ROUTES
+        // route for users to add more info
+        Route::post('/profile/teaceher/setup', [InfoController::class, 'addInfoTeacher']);
+
+
+
+    });
+    
     // register student to a lab
     Route::post('lab/join/{id}', [StudentJoin::class, 'registerStudent']);
-    // route to see lab problems (from which the teachers can select assignments)
-    Route::get('{lab_no}/labs/{id}/problems', [LabQueries::class, 'problems'])
-        ->middleware('checkuser')
-        ->middleware('lab');
-    // route to see one lab problem
-    Route::get('labs/{id}/problems/{p_id}', [LabQueries::class, 'problem'])
-        ->middleware('checkuser')
-        ->middleware('lab');
-
-    // Route to assign a lab problem (giving assignment)
-    Route::post('labs/{id}/problems/{p_id}', [Assignment::class, 'giveAssignment'])
-        ->middleware('checkuser')
-        ->middleware('lab');
-    // Route to check submissions by students - Teacher's route
-    Route::get('labs/{id}/assignmentsubmissions', [Assignment::class, 'submissions'])
-        ->middleware('checkuser')
-        ->middleware('lab');
-
-    // get the labs created by the teacher
-    Route::get('labs', [LabQueries::class, 'labs'])
-        ->middleware('checkuser');
-    // get one lab created by the teacher
-    Route::get('labs/{id}', [LabQueries::class, 'oneLab'])
-        ->middleware('checkuser');
-    
-    // Route to check each submission
-    Route::get('/labs/{id}/assignmentsubmissions/{s_id}', [Assignment::class, 'submission'])
-        ->middleware('checkuser')
-        ->middleware('lab');
-
-    // route to accept the submission
-    Route::put('/labs/{id}/assignmentsubmissions/{s_id}/accept', [Assignment::class, 'accept'])
-        ->middleware('checkuser')
-        ->middleware('lab');
-
-    Route::put('/labs/{id}/assignmentsubmissions/{s_id}/reject', [Assignment::class, 'reject'])
-        ->middleware('checkuser')
-        ->middleware('lab');
-
-    // route to run submitted code
-    Route::post('/labs/{id}/assignmentsubmissions/{s_id}/runcode', [Assignment::class, 'runCode'])
-        ->middleware('checkuser')
-        ->middleware('lab');
+        
     
     // lab dashboard for students
     Route::get('lab', [StudentLabController::class, 'labs']);
@@ -179,18 +185,11 @@ Route::group(['middleware' => 'auth:api'], function() {
 
 
     // PROFILE BASED ROUTES
-    // route for users to add more info
-    Route::post('/profile/teaceher/setup', [InfoController::class, 'addInfoTeacher'])
-        ->middleware('checkuser');
-
     Route::post('/profile/student/setup', [InfoController::class, 'addInfoStudent']);
 
 
-
-
 });
-
-
+// auth:api grouping ends
 
 
 // get the list of practice problems for a specific lab day
@@ -209,144 +208,141 @@ Route::get('{lab_no}/lab/problems', [LabProblemQuery::class, 'getAllProblems']);
 Route::get('lab/problems/{id}', [LabProblemQuery::class, 'getOneProblem']);
 
 
-
-
 // get labs
 Route::get('labs-all', [LabQueries::class, 'getAllLabs']);
 // get lab teachers
 Route::get('labteachers', [LabQueries::class, 'getAllLabTeachers']);
-
-
-
-
 
 // Route to show given assignments
 Route::get('lab/assignments', [Assignment::class, 'showAssignments']);
 
 
 
-// just for testing
-Route::get('/some/definite/user', function(Request $request) {
-    return $request->user()->id;
-})->middleware(('auth:api'));
-
-
-
-// storing file
-Route::get('/write', function() {
-    Storage::disk('local')->put('example.txt', 'some contents');
+// TESTING URLS
+Route::group(['prefix' => 'test'], function() {
+    Route::get('/some/definite/user', function(Request $request) {
+        return $request->user()->id;
+    })->middleware(('auth:api'));
+    
+    
+    
+    // storing file
+    Route::get('/write', function() {
+        Storage::disk('local')->put('example.txt', 'some contents');
+    });
+    
+    
+    // getting the contents of a file in raw string
+    Route::get('/getfile', function() {
+        $content = Storage::disk('local')->get('example.txt');
+        return response()->json([
+            "content" => $content
+        ]);
+    });
+    
+    // file upload route
+    Route::post('/uploadfile', [FileUpload::class, 'fileUpload']);
+    
+    
+    // url params test
+    Route::get('/value/{code}', function(Request $request) {
+        $value = $request->route('code');
+        return response()->json([
+            'value' => $value,
+        ]);
+    });
+    
+    // url params test 2
+    Route::get('value/{id}/problems', function(Request $request) {
+        $value = $request->route('id');
+        return response()->json([
+            'value' => $value
+        ]);
+    });
+    
+    // query test
+    Route::get('query', function () {
+        $user = User::where('id', 1)->where('email', 'aashab@gmail.com')->get()->first();
+        return response()->json([
+            'user' => $user
+        ]);
+    });
+    
+    // check middleware
+    Route::get('/teacher', function(Request $request) {
+        return response()->json([
+            "message" => "Hello Teacher!"
+        ]);
+    })->middleware('auth:api')->middleware('checkuser');
+    
+    
+    // check two params
+    Route::get('sum/{code}/and/{values}', function(Request $request) {
+        $code = $request->route('code');
+        $values = $request->route('values');
+        return response()->json([ 
+            'a' => $code,
+            'b' => $values
+        ]);
+    });
+    
+    // request body line test
+    Route::post('/line', function(Request $request) {
+        $a = explode("\r\n", $request->line);
+        return response()->json([
+            'res' => $a[0],
+            'res2' => $a[1]
+        ]);
+    });
+    
+    // query param test #
+    Route::get('/{code}/hey', function(Request $request) {
+        $a = $request->route('code');
+        return response()->json([
+            'code' => $a
+        ]);
+    });
+    // WORKS!
+    
+    
+    // loging test
+    Route::get('/log', function() {
+        Log::channel('errors')->alert('HANGMAN!');
+        // log messages
+        // emergeney, alert, critical, error, warning, notice, debug
+        // Log::channel('errors')->alert(['message' => 'asdasdasds']);
+    });
+    
+    // password hashing test
+    Route::get('/password', function() {
+        $hashed_password = Hash::make('password');
+        return response()->json([
+            'hashed password' => $hashed_password
+        ]);
+    });
+    
+    // NOT EQUAL query test
+    Route::get('/q', function() {
+        $users = User::where('id', '!=', 3)->get();
+        return response()->json([
+            'users' => $users
+        ]);
+    });
+    // WORKS
+    
+    // time test
+    Route::get('/time', function() {
+        $delay = json_encode(now());
+        return response()->json([
+            'delay' => $delay
+        ]);
+    });
+    
+    // guest middleware test
+    Route::get('/lock', function() {
+        return response()->json([
+            'string' => 'some words'
+        ]);
+    })->middleware('guest');
 });
 
-
-// getting the contents of a file in raw string
-Route::get('/getfile', function() {
-    $content = Storage::disk('local')->get('example.txt');
-    return response()->json([
-        "content" => $content
-    ]);
-});
-
-// file upload route
-Route::post('/uploadfile', [FileUpload::class, 'fileUpload']);
-
-
-// url params test
-Route::get('/value/{code}', function(Request $request) {
-    $value = $request->route('code');
-    return response()->json([
-        'value' => $value,
-    ]);
-});
-
-// url params test 2
-Route::get('value/{id}/problems', function(Request $request) {
-    $value = $request->route('id');
-    return response()->json([
-        'value' => $value
-    ]);
-});
-
-// query test
-Route::get('query', function () {
-    $user = User::where('id', 1)->where('email', 'aashab@gmail.com')->get()->first();
-    return response()->json([
-        'user' => $user
-    ]);
-});
-
-// check middleware
-Route::get('/teacher', function(Request $request) {
-    return response()->json([
-        "message" => "Hello Teacher!"
-    ]);
-})->middleware('auth:api')->middleware('checkuser');
-
-
-// check two params
-Route::get('sum/{code}/and/{values}', function(Request $request) {
-    $code = $request->route('code');
-    $values = $request->route('values');
-    return response()->json([ 
-        'a' => $code,
-        'b' => $values
-    ]);
-});
-
-// request body line test
-Route::post('/line', function(Request $request) {
-    $a = explode("\r\n", $request->line);
-    return response()->json([
-        'res' => $a[0],
-        'res2' => $a[1]
-    ]);
-});
-
-// query param test #
-Route::get('/{code}/hey', function(Request $request) {
-    $a = $request->route('code');
-    return response()->json([
-        'code' => $a
-    ]);
-});
-// WORKS!
-
-
-// loging test
-Route::get('/log', function() {
-    Log::channel('errors')->alert('HANGMAN!');
-    // log messages
-    // emergeney, alert, critical, error, warning, notice, debug
-    // Log::channel('errors')->alert(['message' => 'asdasdasds']);
-});
-
-// password hashing test
-Route::get('/password', function() {
-    $hashed_password = Hash::make('password');
-    return response()->json([
-        'hashed password' => $hashed_password
-    ]);
-});
-
-// NOT EQUAL query test
-Route::get('/q', function() {
-    $users = User::where('id', '!=', 3)->get();
-    return response()->json([
-        'users' => $users
-    ]);
-});
-// WORKS
-
-// time test
-Route::get('/time', function() {
-    $delay = json_encode(now());
-    return response()->json([
-        'delay' => $delay
-    ]);
-});
-
-// guest middleware test
-Route::get('/lock', function() {
-    return response()->json([
-        'string' => 'some words'
-    ]);
-})->middleware('guest');
