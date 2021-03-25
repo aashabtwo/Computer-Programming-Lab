@@ -8,6 +8,8 @@ use App\Models\LabAssignment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+use function GuzzleHttp\Promise\exception_for;
+
 class AssignmentSubmission extends Controller
 {
     /**
@@ -63,13 +65,31 @@ class AssignmentSubmission extends Controller
                  * use the title to load solution
                  * run test cases against solution lines
                  */
-            $compile_command = 'gcc -lm ' . $submissions_directory . '' . $submissionName;
+            $compile_command = 'gcc -lm ' . $submissions_directory . '' . $submissionName . ' ' . '2>&1';
             // handle compilation exception
-            exec($compile_command);
+            $compile = shell_exec($compile_command);
+            if ($compile) {
+                // send the error
+                return response()->json([
+                    'message' => 'Compilation Error',
+                    'error' => $compile
+                ]);
+            }
+            // else
             if ($title_trimmed == 'HelloWorldinC') {
                 // execute code without inputs
-                $blah = 'okay';
+                // handling runtime exception
                 $code = exec('./a.out');
+                if (!$code) {
+                    // will be null if an exception occurs
+                    // capture the runtime error
+                    // return response
+                    $runtime_error = shell_exec('./a.out 2>&1');
+                    return response()->json([
+                        'message' => 'Runtime Error',
+                        'error' => $runtime_error,
+                    ]);
+                }
                 if ($code == 'Hello, World!') {
                     $assignment_submission->passed = true;
                 }
@@ -79,10 +99,8 @@ class AssignmentSubmission extends Controller
             }
             else {
                 // execute with inputs
-                $blah = 'not okay';
                 $iteration = (int)$iterations;
                 $num = 0;
-
                 // load solution, 
 
                 $solution_path = $solution_directory . '' . $title_trimmed;
@@ -94,6 +112,18 @@ class AssignmentSubmission extends Controller
                 $input_path = $solution_path . '/' . 'input0.txt';
                 $execute_command = './a.out < ' . $input_path;
                 $code = shell_exec($execute_command);
+                // handling runtime exception
+                if (!$code) {
+                    // $code is null if a runtime exception occurs
+                    // capture the runtime error
+                    // return response
+                    $runtime_error = shell_exec('./a.out 2>&1');
+                    return response()->json([
+                        'message' => 'Runtime Error',
+                        'error' => $runtime_error,
+                    ]);
+                }
+                // else
                 $output = explode("\n", $code);
                 for ($i = 0; $i < count($output); $i++) {
                     if ($output[$i] != $solution[$i]) {
@@ -114,10 +144,7 @@ class AssignmentSubmission extends Controller
                 }
 
             }
-            
-
-            
-            
+        
         }
     }
 

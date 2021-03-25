@@ -337,7 +337,7 @@ Not to show -> "lab_id", "input_content", "output_content".
 	"password"
 }
 ```
-2. **/api/practice/problems/{id}** -> request route to submit submission file. The post request should send a file (multipart/form-data)
+2. **/api/practice/problems/{id}** -> request route to submit submission file. The post request should send a file (multipart/form-data).
 3. **/api/createlab** -> **Create Lab** : request route to create a lab.
 4. **/api/lab/join/{id}** -> **Join Lab**: request route for students to join a lab.
 5. **/api/labs/{id}/problems/{problem_id}**: **Give Assignment**: (Protected route for teachers)request to give the problem with this id as assignment.
