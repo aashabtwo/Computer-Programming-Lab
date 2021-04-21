@@ -196,7 +196,7 @@ Route::group(['middleware' => 'auth:api'], function() {
 Route::get('/{lab_no}/practice/problems', [ProblemQuery::class, 'getAllProblems']);
 
 
-
+///////
 // get one problem
 Route::get('practice/problems/{id}', [ProblemQuery::class, 'getOneProblem']);
 
