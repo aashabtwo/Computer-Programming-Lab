@@ -28,7 +28,7 @@ class AddSubmittedByToAssignmentSubmissions extends Migration
     {
         Schema::table('assignment_submissions', function (Blueprint $table) {
             // in case this column needs to be dropped
-            $table->dropColumn('submitted_by');
+            $table->dropColumn('submiited_by');
         });
     }
 }
