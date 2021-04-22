@@ -53,6 +53,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
  * with this, all users will be logged out except for the admin
  */
 // delete user
+
+Route::get('/', function() {
+    return response('Welcome');
+});
 Route::delete('/admin/deleteuser/{id}', [AdminController::class, 'deleteUser'])
     ->middleware('auth:api')
     ->middleware('admin');
