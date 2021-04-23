@@ -75,11 +75,29 @@ class CodeSubmit extends Controller
             fclose($solution_file);
             
             $j = 0; // iteration
-            for ($i = 0; $i < 5; $i++) {
+            for ($i = 0; $i < 5; $i++) {    // 5 test cases
                 $path = $solution_path . "/input" . strval($i) . '.txt';
                 $execute_command = './a.out < ' . $path;
                 $code = shell_exec($execute_command);
                 $splitted = explode("\n", $code);
+                $output_length = count($splitted);
+                // for a in output_length
+                $b = $j;
+                for ($a = 0; $a < $output_length; $a++) {
+                    if ($splitted[$a] != $solution[$b]) {
+                        $num = 1;
+                        $message = "Failed";
+                        $empty_array[] = $message;
+                        $empty_array[] = false;
+                        break;
+                    }
+                    else {
+                        $message = "Passed";
+                        $empty_array = $message;
+                    }
+                    $b += 1;
+                }
+                /*
                 if ($splitted[0] == $solution[$j] && $splitted[1] == $solution[$j+1] ) {
                     $message = "Passed";
                     $empty_array[] = $message;
@@ -91,6 +109,7 @@ class CodeSubmit extends Controller
                     $empty_array[] = false;
                     break;
                 }
+                */
                 $j = $j + $iterations;
             }
 
