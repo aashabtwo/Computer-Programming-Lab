@@ -197,7 +197,7 @@ Route::group(['middleware' => 'auth:api'], function() {
 
 
 // get the list of practice problems for a specific lab day
-Route::get('/{lab_no}/practice/problems', [ProblemQuery::class, 'getAllProblems']);
+Route::get('/{lab_no}/practice/problems', [ProblemQuery::class, 'getAllProblems'])->middleware('cors');
 
 
 ///////
