@@ -50,6 +50,10 @@ class CodeSubmit extends Controller
             $problem = Problem::where('id', $id)->get()->first();
             $problem_title = $problem->title;
             $iterations = $problem->iter_num;
+            if ($iterations == 'Variable') {
+                //
+            }
+            // else
             $title = str_replace(' ', '', $problem_title);
             $submission = new CodeSubmission();
             $submission->problem_id = $id;
