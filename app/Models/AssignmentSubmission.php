@@ -18,6 +18,7 @@ class AssignmentSubmission extends Model
         'reviewed', // bool
         'approved', // bool
         'remarks',  // teachers' remarks
+        'student_remarks',
         'submitted_by'
     ];
 }

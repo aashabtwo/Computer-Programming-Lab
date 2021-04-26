@@ -31,6 +31,10 @@ class AssignmentSubmission extends Controller
         }
 
         if ($request->file()) {
+            /**
+             * get name and set submission path
+             * get the solution
+             */
             $submissionName = time().'_'.$request->file->getClientOriginalName();
             $filePath = $request->file('file')->storeAs('assignment_submissions', $submissionName, 'public');
             $direct = dirname(__DIR__);
