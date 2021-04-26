@@ -95,13 +95,16 @@ class AssignmentSubmission extends Controller
                     ]);
                 }
                 if ($code == 'Hello, World!') {
+                    $assignment_submission->marks="10";
                     $assignment_submission->passed = true;
                 }
                 else {
+                    $assignment_submission->marks="0";
                     $assignment_submission->passed = false;
                 }
             }
             else {
+                $empty_array = array();
                 // execute with inputs
                 $iteration = (int)$iterations;
                 $num = 0;
@@ -113,6 +116,42 @@ class AssignmentSubmission extends Controller
                 $solution = explode("\n", $solution_string);
                 
                 // execute code
+                // must be in a loop
+                $j = 0;
+                for ($i = 0; $i<5; $i++) {
+                    $path = $solution_path . '/' . strval($i) . '.txt';
+                    $execute = './a.out < ' . $path;
+                    $code = shell_exec($execute);
+                    // check for errors
+                    if (!$code) {
+                        $runtimeError = shell_exec('./a.out 2>&1');
+                        return response()->json([
+                            'message' => 'Runtime Error',
+                            'error' => $runtimeError,
+                        ]);
+                        break;
+                    }
+                    // else
+                    $splitted_output = explode("\n", $code);
+                    $output_length = count($splitted_output);
+                    
+                    $b = $j;
+                    for ($a = 0; $a < $output_length; $a++) {
+                        if ($splitted_output[$a] != $solution[$b]) {
+                            $num = 1;
+                            $message = "Failed";
+                            $empty_array[] = $message;
+                            $empty_array[] = false;
+                            break;
+                            
+                        }
+                        else {
+                            $empty_array[] = "Passed";
+                        }
+                        $b += 1;
+                    }
+                    $j += $iteration;
+                }
                 $input_path = $solution_path . '/' . 'input0.txt';
                 $execute_command = './a.out < ' . $input_path;
                 $code = shell_exec($execute_command);

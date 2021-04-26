@@ -19,6 +19,8 @@ class AssignmentSubmission extends Model
         'approved', // bool
         'remarks',  // teachers' remarks
         'student_remarks',
+        'marks',
+        'error',    // errors of the submission
         'submitted_by'
     ];
 }
