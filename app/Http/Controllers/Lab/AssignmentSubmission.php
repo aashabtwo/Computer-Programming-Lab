@@ -95,11 +95,11 @@ class AssignmentSubmission extends Controller
                     ]);
                 }
                 if ($code == 'Hello, World!') {
-                    $assignment_submission->marks="10";
+                    $assignment_submission->markss="10";
                     $assignment_submission->passed = true;
                 }
                 else {
-                    $assignment_submission->marks="0";
+                    $assignment_submission->markss="0";
                     $assignment_submission->passed = false;
                 }
             }
@@ -140,6 +140,8 @@ class AssignmentSubmission extends Controller
                         if ($splitted_output[$a] != $solution[$b]) {
                             $num = 1;
                             $message = "Failed";
+                            $assignment_submission->markss = "0";
+                            $assignment_submission->passed = false;
                             $empty_array[] = $message;
                             $empty_array[] = false;
                             break;
@@ -152,6 +154,7 @@ class AssignmentSubmission extends Controller
                     }
                     $j += $iteration;
                 }
+                /*
                 $input_path = $solution_path . '/' . 'input0.txt';
                 $execute_command = './a.out < ' . $input_path;
                 $code = shell_exec($execute_command);
@@ -178,7 +181,9 @@ class AssignmentSubmission extends Controller
                         break;
                     }
                 }
+                */
                 $assignment_submission->passed = true;
+                $assignment_submission->markss = "10";
                 $assignment_submission->save();
                 return response()->json([
                     'message' => 'Success! Your submission is accepted. Your instructor will now review your code'

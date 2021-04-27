@@ -97,7 +97,7 @@ class CodeSubmit extends Controller
                     }
                     else {
                         $message = "Passed";
-                        $empty_array = $message;
+                        $empty_array[] = $message;
                     }
                     $b += 1;
                 }
