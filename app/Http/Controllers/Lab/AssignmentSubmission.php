@@ -125,6 +125,7 @@ class AssignmentSubmission extends Controller
                     // check for errors
                     if (!$code) {
                         $runtimeError = shell_exec('./a.out 2>&1');
+                        //$assignment_submission->errorr = $runtimeError;
                         return response()->json([
                             'message' => 'Runtime Error',
                             'error' => $runtimeError,
@@ -184,7 +185,10 @@ class AssignmentSubmission extends Controller
                 */
                 $assignment_submission->passed = true;
                 $assignment_submission->markss = "10";
-                $assignment_submission->save();
+                $submit = $request->submit;
+                if ($submit) {
+                    $assignment_submission->save();
+                } 
                 return response()->json([
                     'message' => 'Success! Your submission is accepted. Your instructor will now review your code'
                 ], 200);

@@ -179,9 +179,13 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('lab/{id}/assignments/{assignment_id}', [StudentLabController::class, 'oneLabAssignment'])
         ->middleware('labstudent');
 
-    // route to submit assignment
+    // post route to check assignment against test cases
     Route::post('lab/{id}/assignments/{assignment_id}', [AssignmentSubmission::class, 'submit'])
         ->middleware('labstudent');
+    // post route to submit assignment
+    Route::post('lab/{id}/assignments/{assignment_id}', [AssignmentSubmission::class, 'submit'])
+        ->middleware('labstudent');
+
 
     // route for students to check submission results
     Route::get('lab/{id}/results/{bool}', [StudentLabController::class, 'accepts'])
@@ -197,7 +201,7 @@ Route::group(['middleware' => 'auth:api'], function() {
 
 
 // get the list of practice problems for a specific lab day
-Route::get('/{lab_no}/practice/problems', [ProblemQuery::class, 'getAllProblems'])->middleware('cors');
+Route::get('/{lab_no}/practice/problems', [ProblemQuery::class, 'getAllProblems'])->middleware('cors')->middleware('auth:api');
 
 
 ///////
