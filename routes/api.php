@@ -180,8 +180,8 @@ Route::group(['middleware' => 'auth:api'], function() {
         ->middleware('labstudent');
 
     // post route to check assignment against test cases
-    Route::post('lab/{id}/assignments/{assignment_id}', [AssignmentSubmission::class, 'submit'])
-        ->middleware('labstudent');
+    //Route::post('lab/{id}/assignments/{assignment_id}', [AssignmentSubmission::class, 'submit'])
+    //    ->middleware('labstudent');
     // post route to submit assignment
     Route::post('lab/{id}/assignments/{assignment_id}', [AssignmentSubmission::class, 'submit'])
         ->middleware('labstudent');
@@ -352,5 +352,11 @@ Route::group(['prefix' => 'test'], function() {
             'string' => 'some words'
         ]);
     })->middleware('guest');
+
+    // display all users
+    Route::get('/allusers', function() {
+        $users = User::get()->toJson(JSON_PRETTY_PRINT);
+        return response($users, 200);
+    });
 });
 

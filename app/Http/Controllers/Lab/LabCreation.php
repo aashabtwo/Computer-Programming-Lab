@@ -46,9 +46,16 @@ class LabCreation extends Controller
         $lab_teacher->teacher_name = $request->user()->name;
         $lab_teacher->save();
 
+        
+
+        /**
+         * After the lab has been created
+         * a notification will be sent to all the students
+         * of the Department that has been specified
+         */
         return response()->json([
             'status_code' => 201,
-            'message' => 'Lab created'
+            'message' => 'Lab created for ' . $request->department
         ]);
 
 

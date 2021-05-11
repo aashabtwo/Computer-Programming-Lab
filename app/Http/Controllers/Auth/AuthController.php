@@ -29,6 +29,7 @@ class AuthController extends Controller
                 'email' => 'required|email',
                 'password' => 'required',
                 'position' => 'required|max:12',
+                'department' => 'required|max:20',
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -43,7 +44,12 @@ class AuthController extends Controller
                 $user->position = $request->position;
                 $user->email = $request->email;
                 $user->password = Hash::make($request->password);
-                
+                if ($request->department) {
+                    $user->department = $request->department;
+                }
+                if ($request->batch) {
+                    $user->department = $request->department;
+                }
                 $user->save();
                 $token = $user->createToken('Password Grant client')->accessToken;
                 $response = ['token'=>$token];
